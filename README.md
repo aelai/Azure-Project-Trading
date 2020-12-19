@@ -3,7 +3,14 @@ The aim of this project is to build data pipelines pulling from various financia
 
 # Technology
 This propject will be based around using Microsoft Azure resources, in particular:
+- ARM Template
+    - This is used to deploy resources. A Deploy_StartUp_Resource.json file will be used to create all start up resrouces such as key vault, storage and resource groups.
+    - Tutorial to create an ARM template can be found [here] (https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-tutorial-create-first-template?tabs=azure-powershell).
 - Azure Data Factory
 - Azure Data Lake Storage
+- Power Shell
+    - Used to 
 
 # Data Sources
+
+
