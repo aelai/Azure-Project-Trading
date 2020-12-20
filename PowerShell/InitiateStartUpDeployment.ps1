@@ -36,8 +36,18 @@ else
     Write-Host "Resource group adlsazureproject2020 already exists."
 }
 
-#Deploy ARM template for key vault
-New-AzResourceGroupDeployment `
--Name Deploy_StartUp_KeyVault `
--ResourceGroupName rgAzureProject `
--TemplateFile $FilePathKeyVault
+Get-AzKeyVault -Name kvazureproject -ErrorVariable notPresent -ErrorAction SilentlyContinue
+if ($notPresent)
+{  
+    Write-Host "Creating Key Vault"
+    #Deploy ARM template for key vault
+    New-AzResourceGroupDeployment `
+    -Name Deploy_StartUp_KeyVault `
+    -ResourceGroupName rgAzureProject `
+    -TemplateFile $FilePathKeyVault
+
+}
+else
+{
+    Write-Host "Key Vault already exists."
+}
