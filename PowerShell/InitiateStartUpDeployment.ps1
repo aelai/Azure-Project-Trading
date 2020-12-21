@@ -1,7 +1,8 @@
 [CmdletBinding()]
 param (
     $FilePathStorage,
-    $FilePathKeyVault
+    $FilePathKeyVault,
+    $FilePathParameters
 )
 #Authenticate azure account
 Connect-AzAccount
@@ -20,8 +21,8 @@ else
     Write-Host "Resource group rgAzureProject already exists."
 }
 
-Get-AzStorageAccount -Name adlsazureproject2020 -ErrorVariable notPresent -ErrorAction SilentlyContinue
-if ($notPresent)
+Get-AzStorageAccount -ResourceGroupName rgAzureProject -Name adlsazureproject2020 -ErrorVariable noStorage
+if ($noStorage)
 {  
     Write-Host "Creating Storage Account adlsazureproject2020"
     
@@ -36,15 +37,16 @@ else
     Write-Host "Resource group adlsazureproject2020 already exists."
 }
 
-Get-AzKeyVault -Name kvazureproject -ErrorVariable notPresent -ErrorAction SilentlyContinue
-if ($notPresent)
+Get-AzKeyVault -Name kvazureproject -ErrorVariable noKeyVault -ErrorAction SilentlyContinue
+if ($noKeyVault)
 {  
     Write-Host "Creating Key Vault"
     #Deploy ARM template for key vault
     New-AzResourceGroupDeployment `
     -Name Deploy_StartUp_KeyVault `
     -ResourceGroupName rgAzureProject `
-    -TemplateFile $FilePathKeyVault
+    -TemplateFile $FilePathKeyVault `
+    -TemplateParameterFile $FilePathParameters
 
 }
 else
