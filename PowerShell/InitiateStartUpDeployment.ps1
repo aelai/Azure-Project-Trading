@@ -30,7 +30,7 @@ if ($noStorage)
     New-AzResourceGroupDeployment `
     -Name Deploy_StartUp_StorageAccount `
     -ResourceGroupName rgAzureProject `
-    -TemplateFile $FilePathStorage
+    -TemplateFile "./Deploy_StartUp_StorageAccount.json"
 }
 else
 {
@@ -45,8 +45,8 @@ if ($noKeyVault)
     New-AzResourceGroupDeployment `
     -Name Deploy_StartUp_KeyVault `
     -ResourceGroupName rgAzureProject `
-    -TemplateFile $FilePathKeyVault `
-    -TemplateParameterFile $FilePathParameters
+    -TemplateFile "./Deploy_StartUp_KeyVault.json"`
+    -TemplateParameterFile "./AzureProjectKeyVaultParameters.json"
 
 }
 else
