@@ -1,1 +1,2 @@
-AzureProjectParameters.json
+AzureProjectKeyVaultParameters.json,
+AzureProjectADFParameters.json
