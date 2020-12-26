@@ -1,9 +1,9 @@
-[CmdletBinding()]
-param (
-    $FilePathStorage,
-    $FilePathKeyVault,
-    $FilePathParameters
-)
+#[CmdletBinding()]
+#param (
+#    $FilePathStorage,
+#    $FilePathKeyVault,
+#    $FilePathParameters
+#)
 #Authenticate azure account
 Connect-AzAccount
 
@@ -30,7 +30,7 @@ if ($noStorage)
     New-AzResourceGroupDeployment `
     -Name Deploy_StartUp_StorageAccount `
     -ResourceGroupName rgAzureProject `
-    -TemplateFile "./Deploy_StartUp_StorageAccount.json"
+    -TemplateFile "ARM Template/Deploy_StartUp_StorageAccount.json"
 }
 else
 {
@@ -45,8 +45,8 @@ if ($noKeyVault)
     New-AzResourceGroupDeployment `
     -Name Deploy_StartUp_KeyVault `
     -ResourceGroupName rgAzureProject `
-    -TemplateFile "./Deploy_StartUp_KeyVault.json"`
-    -TemplateParameterFile "./AzureProjectKeyVaultParameters.json"
+    -TemplateFile "ARM Template/Deploy_StartUp_KeyVault.json"`
+    -TemplateParameterFile "ARM Template/AzureProjectKeyVaultParameters.json"
 
 }
 else
