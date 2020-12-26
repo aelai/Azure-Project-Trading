@@ -1,0 +1,30 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName": {
+            "value": "kvazureproject",
+            "metadata": {
+              "description": "Key Vault Name"
+            }
+        },
+        "tenantId": {
+            "value": "75099764-499a-4c9a-be3b-eb20119a46dd",
+            "metadata": {
+              "description": "Tenant ID"
+            }
+        },
+        "objectId": {
+            "value": "686a3719-5eb8-4913-bb38-fca5335896aa",
+            "metadata": {
+              "description": "Name?"
+            }
+        },
+        "secretName": {
+            "value": "MyAdminPassword"
+        },        
+        "enabledForTemplateDeployment": {
+            "value": true
+        }
+    }
+}
