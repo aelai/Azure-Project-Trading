@@ -37,8 +37,9 @@ else
     Write-Host "Resource group adlsazureproject2020 already exists."
 }
 
-Get-AzKeyVault -Name kvazureproject -ErrorVariable noKeyVault -ErrorAction SilentlyContinue
-if ($noKeyVault)
+Get-AzKeyVault -VaultName kvazureproject -ErrorVariable noKeyVault -ErrorAction SilentlyContinue
+#if ($noKeyVault)
+if ([string]::IsNullOrEmpty($noKeyVault))
 {  
     Write-Host "Creating Key Vault"
     #Deploy ARM template for key vault
