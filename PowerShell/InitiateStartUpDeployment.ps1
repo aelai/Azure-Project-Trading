@@ -54,3 +54,21 @@ else
 {
     Write-Host "Key Vault already exists."
 }
+
+Get-AzDataFactory -Name DownloadData -ResourceGroupName rgAzureProject -ErrorVariable noADF -ErrorAction SilentlyContinue
+if ($noADF)
+#if ([string]::IsNullOrEmpty($noADF))
+{  
+    Write-Host "Creating Azure DataFactory"
+    #Deploy ARM template for key vault
+    New-AzResourceGroupDeployment `
+    -Name Deploy_StartUp_AzureDataFactory `
+    -ResourceGroupName rgAzureProject `
+    -TemplateFile "ARM Template/Deploy_StartUp_ADFv2.json"`
+    -TemplateParameterFile "ARM Template/AzureProjectADFParameters.json"
+
+}
+else
+{
+    Write-Host "Azure DataFactory already exists."
+}
