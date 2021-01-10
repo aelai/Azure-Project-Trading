@@ -1,35 +1,39 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "dataFactoryName": {
-        "type": "string",
-        "defaultValue": "[parameters('dataFactoryName')]",
-        "metadata": {
-          "description": "Data Factory Name"
-        }
-      },
-      "location": {
-        "type": "string",
-        "defaultValue": "[resourceGroup().location]",
-        "metadata": {
-          "description": "Location of the data factory."
-        }
-      },
-      "storageAccountName": {
-        "type": "string",
-        "defaultValue": "[parameters('storageAccountName')]",
-        "metadata": {
-          "description": "Name of the Azure storage account that contains the input/output data."
-        }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "dataFactoryName": {
+      "type": "string",
+      "defaultValue": "ADFTest",
+      "metadata": {
+        "description": "Data Factory Name"
       }
     },
-    "variables": {
-      "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-      "storageLinkedService": "[resourceId('Microsoft.DataFactory/factories/linkedServices', parameters('dataFactoryName'), 'armTemplateStorageLinkedService')]",
-      "datasetIn": "[resourceId('Microsoft.DataFactory/factories/datasets', parameters('dataFactoryName'), 'armTemplateTestDatasetIn')]",
-      "datasetOut": "[resourceId('Microsoft.DataFactory/factories/datasets', parameters('dataFactoryName'), 'armTemplateTestDatasetOut')]"
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location of the data factory. Currently, only East US, East US 2, and West Europe are supported."
+      }
     },
-    "resources": [
-    ]
-  }
+    "storageAccountName": {
+      "type": "string",
+      "defaultValue": "adlsazureproject2020",
+      "metadata": {
+        "description": "Name of the Azure storage account that contains the input/output data."
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DataFactory/factories",
+      "apiVersion": "2018-06-01",
+      "name": "[parameters('dataFactoryName')]",
+      "location": "[parameters('location')]",
+      "properties": {},
+      "identity": {
+        "type": "SystemAssigned"
+      }
+    }
+  ]
+}
