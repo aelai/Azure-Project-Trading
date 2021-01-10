@@ -47,7 +47,7 @@ if ([string]::IsNullOrEmpty($noKeyVault))
     -Name Deploy_StartUp_KeyVault `
     -ResourceGroupName rgAzureProject `
     -TemplateFile "ARM Template/Deploy_StartUp_KeyVault.json"`
-    -TemplateParameterFile "ARM Template/AzureProjectParameters.json"
+    -TemplateParameterFile "ARM Template/AzureProjectKeyVaultParameters.json"
 
 }
 else
@@ -65,7 +65,7 @@ if ($noADF)
     -Name Deploy_StartUp_AzureDataFactory `
     -ResourceGroupName rgAzureProject `
     -TemplateFile "ARM Template/Deploy_StartUp_ADFv2.json"`
-    -TemplateParameterFile "ARM Template/AzureProjectParameters.json"
+    -TemplateParameterFile "ARM Template/AzureProjectADFParameters.json"
 
 }
 else
