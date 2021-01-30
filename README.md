@@ -13,5 +13,14 @@ This propject will be based around using Microsoft Azure resources, in particula
     - Used to initiate the deployment of certain resources.
 
 # Data Sources
+Below is a list of rsources for source data
+- SimFin
+
+# Set Up Notes
+- Create Service Principle
+    - Save principle secrte to key vault
+- Datafactory Linked Services
+    - Linked Service to KeyVault: Use service principle to authenticate
+    - Linked Service to Source API: Use service principle to authenticate
 
 
