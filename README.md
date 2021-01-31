@@ -24,7 +24,7 @@ Below is a list of rsources for source data
     - Linked Service to KeyVault: Use service principle to authenticate
     - Linked Service to Source API: Use service principle to authenticate
 - ADLS Storage
-    - Managed access by adding service principle
+    - Manage access by adding service principle, ADF to access control
 - Key Vault
     - Add access policies for service principle to ADLS
     - Add access policies for ADF. Will use service principle to authenticate and access sectrets
