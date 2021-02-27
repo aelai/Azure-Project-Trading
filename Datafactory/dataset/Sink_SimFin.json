@@ -1,0 +1,51 @@
+{
+	"name": "Sink_SimFin",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureprojectstorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"SimFinFileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat(dataset().SimFinFileName,'.json')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat('RAW/SimFin/Tickers/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
+					"type": "Expression"
+				},
+				"container": "datalake"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"columns": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"data": {
+					"type": "array",
+					"items": {
+						"type": "array",
+						"items": {
+							"type": "integer"
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

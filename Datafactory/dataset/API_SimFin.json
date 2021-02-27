@@ -1,0 +1,27 @@
+{
+	"name": "API_SimFin",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_SimFin",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"APIKeySimFin": {
+				"type": "string"
+			},
+			"APIQuery": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat(dataset().APIQuery,'?api-key=',dataset().APIKeySimFin)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

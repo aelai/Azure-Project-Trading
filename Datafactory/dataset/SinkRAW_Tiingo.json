@@ -1,0 +1,33 @@
+{
+	"name": "SinkRAW_Tiingo",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureprojectstorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TiingoFilename": {
+				"type": "string",
+				"defaultValue": "AAPL"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat(dataset().TiingoFilename,'.json')",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat('RAW/Tiingo/AAPL/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
+					"type": "Expression"
+				},
+				"container": "datalake"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

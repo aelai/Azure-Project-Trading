@@ -1,0 +1,107 @@
+{
+	"name": "EoDDataPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Eod Data from API",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET"
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "API_Tiingo",
+						"type": "DatasetReference",
+						"parameters": {
+							"APIQuery": {
+								"value": "@pipeline().parameters.APIQuery",
+								"type": "Expression"
+							},
+							"APIKey": {
+								"value": "@pipeline().parameters.APIKey",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SinkRAW_Tiingo",
+						"type": "DatasetReference",
+						"parameters": {
+							"TiingoFilename": "AAPL"
+						}
+					}
+				]
+			},
+			{
+				"name": "Stock LookUp",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "Control_StockPortolfio",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"APIQuery": {
+				"type": "string",
+				"defaultValue": "daily/aapl/prices?startDate=2019-01-02/"
+			},
+			"APIKey": {
+				"type": "string",
+				"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-02-27T19:57:38Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,28 @@
+{
+	"name": "DFRawToCurated",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SinkRAW_Tiingo",
+						"type": "DatasetReference"
+					},
+					"name": "RawTiingo"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "SinkCurated_Tiingo",
+						"type": "DatasetReference"
+					},
+					"name": "CuratedTiingo"
+				}
+			],
+			"transformations": [],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> RawTiingo\nRawTiingo sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
+		}
+	}
+}

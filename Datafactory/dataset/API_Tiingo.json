@@ -1,0 +1,29 @@
+{
+	"name": "API_Tiingo",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_Tiingo",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"APIQuery": {
+				"type": "string",
+				"defaultValue": "daily/aapl/prices?startDate=2019-01-02/"
+			},
+			"APIKey": {
+				"type": "string",
+				"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat(dataset().APIQuery,'&token=',dataset().APIKey)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
