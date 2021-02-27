@@ -1,0 +1,15 @@
+{
+	"name": "Sink_DatabricksDeltaLake",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_DatabricksDeltaLake",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureDatabricksDeltaLakeDataset",
+		"typeProperties": {
+			"database": "default"
+		},
+		"schema": []
+	}
+}

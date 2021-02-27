@@ -1,5 +1,5 @@
 {
-	"name": "Control_StockPortolfio",
+	"name": "Source_ControlStockPortolfio",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "azureprojectstorage",

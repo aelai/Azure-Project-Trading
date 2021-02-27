@@ -1,5 +1,5 @@
 {
-	"name": "API_SimFin",
+	"name": "Source_SimFinAPI",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LinkedService_SimFin",

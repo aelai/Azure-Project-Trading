@@ -1,5 +1,5 @@
 {
-	"name": "Sink_SimFin",
+	"name": "SinkRAW_SimFin",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "azureprojectstorage",

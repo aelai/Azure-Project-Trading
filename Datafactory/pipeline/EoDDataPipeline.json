@@ -34,7 +34,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "API_Tiingo",
+						"referenceName": "Source_TiingoAPI",
 						"type": "DatasetReference",
 						"parameters": {
 							"APIQuery": {
@@ -83,7 +83,7 @@
 						}
 					},
 					"dataset": {
-						"referenceName": "Control_StockPortolfio",
+						"referenceName": "Source_ControlStockPortolfio",
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false

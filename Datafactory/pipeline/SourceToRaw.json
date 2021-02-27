@@ -58,7 +58,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "API_SimFin",
+						"referenceName": "Source_SimFinAPI",
 						"type": "DatasetReference",
 						"parameters": {
 							"APIKeySimFin": {
@@ -74,7 +74,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "Sink_SimFin",
+						"referenceName": "SinkRAW_SimFin",
 						"type": "DatasetReference",
 						"parameters": {
 							"SimFinFileName": {
