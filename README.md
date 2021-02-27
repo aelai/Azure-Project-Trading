@@ -8,6 +8,11 @@ This propject will be based around using Microsoft Azure resources, in particula
     - Tutorial to create an ARM template can be found [here] (https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-tutorial-create-first-template?tabs=azure-powershell).
 - Azure Data Factory
     - Orchestration and management of source data.
+- Azure Key Vault
+    - Storage of Keys and Secrets
+- Azure Databricks
+    - Delta Tables
+    - Potential ML and other transformations
 - Azure Data Lake Storage
 - Power Shell
     - Used to initiate the deployment of certain resources.
@@ -15,6 +20,7 @@ This propject will be based around using Microsoft Azure resources, in particula
 # Data Sources
 Below is a list of rsources for source data
 - SimFin: https://simfin.com/
+- Tiingo: https://www.tiingo.com/
 
 # Set Up Notes
 - Create Service Principle
@@ -29,5 +35,8 @@ Below is a list of rsources for source data
     - Add access policies for service principle to ADLS
     - Add access policies for ADF. Will use service principle to authenticate and access sectrets
     - Add ADF to access control (IAM)
-
+- Azure Databricks
+    - Workspace deployed through ARM template
+- .gitighnore
+    - all parameter files (For now, will tidy this part up later)
 
