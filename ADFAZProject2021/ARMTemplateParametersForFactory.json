@@ -1,0 +1,48 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ADFAZProject2021"
+		},
+		"LinkedService_KeyVault_properties_typeProperties_baseUrl": {
+			"value": "https://kvazureproject.vault.azure.net/"
+		},
+		"LinkedService_SimFin_properties_typeProperties_url": {
+			"value": "https://simfin.com/api/v2/"
+		},
+		"LinkedService_SimFin_properties_typeProperties_servicePrincipalId": {
+			"value": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"LinkedService_SimFin_properties_typeProperties_tenant": {
+			"value": "75099764-499a-4c9a-be3b-eb20119a46dd"
+		},
+		"LinkedService_SimFin_properties_typeProperties_aadResourceId": {
+			"value": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"LinkedService_Tiingo_properties_typeProperties_url": {
+			"value": "https://api.tiingo.com/tiingo/"
+		},
+		"LinkedService_Tiingo_properties_typeProperties_servicePrincipalId": {
+			"value": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"LinkedService_Tiingo_properties_typeProperties_tenant": {
+			"value": "75099764-499a-4c9a-be3b-eb20119a46dd"
+		},
+		"LinkedService_Tiingo_properties_typeProperties_aadResourceId": {
+			"value": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"adlsazureproject2020_properties_typeProperties_url": {
+			"value": "https://adlsazureproject2020.dfs.core.windows.net"
+		},
+		"adlsazureproject2020_properties_typeProperties_tenant": {
+			"value": "75099764-499a-4c9a-be3b-eb20119a46dd"
+		},
+		"adlsazureproject2020_properties_typeProperties_servicePrincipalId": {
+			"value": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"azureprojectstorage_properties_typeProperties_connectionString_secretName": {
+			"value": "AzureStorageConnectionString"
+		}
+	}
+}

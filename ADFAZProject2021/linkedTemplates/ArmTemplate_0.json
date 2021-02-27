@@ -1,0 +1,874 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADFAZProject2021"
+		},
+		"LinkedService_KeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kvazureproject.vault.azure.net/"
+		},
+		"LinkedService_SimFin_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://simfin.com/api/v2/"
+		},
+		"LinkedService_SimFin_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"LinkedService_SimFin_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "75099764-499a-4c9a-be3b-eb20119a46dd"
+		},
+		"LinkedService_SimFin_properties_typeProperties_aadResourceId": {
+			"type": "string",
+			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"LinkedService_Tiingo_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.tiingo.com/tiingo/"
+		},
+		"LinkedService_Tiingo_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"LinkedService_Tiingo_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "75099764-499a-4c9a-be3b-eb20119a46dd"
+		},
+		"LinkedService_Tiingo_properties_typeProperties_aadResourceId": {
+			"type": "string",
+			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"adlsazureproject2020_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlsazureproject2020.dfs.core.windows.net"
+		},
+		"adlsazureproject2020_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "75099764-499a-4c9a-be3b-eb20119a46dd"
+		},
+		"adlsazureproject2020_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
+		},
+		"azureprojectstorage_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "AzureStorageConnectionString"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkedService_KeyVault')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('LinkedService_KeyVault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkedService_DatabricksDeltaLake')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricksDeltaLake",
+				"typeProperties": {
+					"domain": "https://adb-7520443299832378.18.azuredatabricks.net",
+					"clusterId": "0227-171820-gutsy351",
+					"accessToken": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LinkedService_KeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "DatabricksDeltaAccesstoken"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkedService_SimFin')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('LinkedService_SimFin_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "AadServicePrincipal",
+					"servicePrincipalId": "[parameters('LinkedService_SimFin_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LinkedService_KeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ServicePrincipleSecret"
+					},
+					"tenant": "[parameters('LinkedService_SimFin_properties_typeProperties_tenant')]",
+					"aadResourceId": "[parameters('LinkedService_SimFin_properties_typeProperties_aadResourceId')]"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LinkedService_Tiingo')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('LinkedService_Tiingo_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "AadServicePrincipal",
+					"servicePrincipalId": "[parameters('LinkedService_Tiingo_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LinkedService_KeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ServicePrincipleSecret"
+					},
+					"tenant": "[parameters('LinkedService_Tiingo_properties_typeProperties_tenant')]",
+					"aadResourceId": "[parameters('LinkedService_Tiingo_properties_typeProperties_aadResourceId')]"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adlsazureproject2020')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('adlsazureproject2020_properties_typeProperties_url')]",
+					"tenant": "[parameters('adlsazureproject2020_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('adlsazureproject2020_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalCredentialType": "ServicePrincipalKey",
+					"servicePrincipalCredential": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LinkedService_KeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ServicePrincipleSecret"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azureprojectstorage')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LinkedService_KeyVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('azureprojectstorage_properties_typeProperties_connectionString_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SinkCurated_Tiingo')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureprojectstorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "CURATED/EoDStockPrice/AAPL",
+						"container": "datalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SinkRAW_SimFin')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureprojectstorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"SimFinFileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().SimFinFileName,'.json')",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@concat('RAW/SimFin/Tickers/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
+							"type": "Expression"
+						},
+						"container": "datalake"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"columns": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						},
+						"data": {
+							"type": "array",
+							"items": {
+								"type": "array",
+								"items": {
+									"type": "integer"
+								}
+							}
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SinkRAW_Tiingo')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureprojectstorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"TiingoFilename": {
+						"type": "string",
+						"defaultValue": "AAPL"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().TiingoFilename,'.json')",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@concat('RAW/Tiingo/AAPL/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
+							"type": "Expression"
+						},
+						"container": "datalake"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Sink_DatabricksDeltaLake')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_DatabricksDeltaLake",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureDatabricksDeltaLakeDataset",
+				"typeProperties": {
+					"database": "default"
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_DatabricksDeltaLake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Source_ControlStockPortolfio')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureprojectstorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "AzureProjectStockPortfolio.csv",
+						"folderPath": "CURATED/Control",
+						"container": "datalake"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					},
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Source_SimFinAPI')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_SimFin",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"APIKeySimFin": {
+						"type": "string"
+					},
+					"APIQuery": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat(dataset().APIQuery,'?api-key=',dataset().APIKeySimFin)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_SimFin')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Source_TiingoAPI')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkedService_Tiingo",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"APIQuery": {
+						"type": "string",
+						"defaultValue": "daily/aapl/prices?startDate=2019-01-02/"
+					},
+					"APIKey": {
+						"type": "string",
+						"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat(dataset().APIQuery,'&token=',dataset().APIKey)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_Tiingo')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/EoDDataPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Eod Data from API",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "Source_TiingoAPI",
+								"type": "DatasetReference",
+								"parameters": {
+									"APIQuery": {
+										"value": "@pipeline().parameters.APIQuery",
+										"type": "Expression"
+									},
+									"APIKey": {
+										"value": "@pipeline().parameters.APIKey",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkRAW_Tiingo",
+								"type": "DatasetReference",
+								"parameters": {
+									"TiingoFilename": "AAPL"
+								}
+							}
+						]
+					},
+					{
+						"name": "Stock LookUp",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "Source_ControlStockPortolfio",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					}
+				],
+				"parameters": {
+					"APIQuery": {
+						"type": "string",
+						"defaultValue": "daily/aapl/prices?startDate=2019-01-02/"
+					},
+					"APIKey": {
+						"type": "string",
+						"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T19:57:38Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Source_TiingoAPI')]",
+				"[concat(variables('factoryId'), '/datasets/SinkRAW_Tiingo')]",
+				"[concat(variables('factoryId'), '/datasets/Source_ControlStockPortolfio')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SourceToRaw')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Tickers List",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings",
+									"filePattern": "setOfObjects"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['columns']"
+										},
+										"sink": {
+											"path": "$['columns']"
+										}
+									},
+									{
+										"source": {
+											"path": "$['data']"
+										},
+										"sink": {
+											"path": "$['data']"
+										}
+									}
+								],
+								"collectionReference": ""
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Source_SimFinAPI",
+								"type": "DatasetReference",
+								"parameters": {
+									"APIKeySimFin": {
+										"value": "@pipeline().parameters.APIKeySimFin",
+										"type": "Expression"
+									},
+									"APIQuery": {
+										"value": "@pipeline().parameters.APIQuery",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkRAW_SimFin",
+								"type": "DatasetReference",
+								"parameters": {
+									"SimFinFileName": {
+										"value": "@pipeline().parameters.SimFinFileName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"APIKeySimFin": {
+						"type": "string",
+						"defaultValue": "Sl7E4wzP0jWTSvTphg3PwShAwosvVaLj"
+					},
+					"APIQuery": {
+						"type": "string",
+						"defaultValue": "companies/list"
+					},
+					"SimFinFileName": {
+						"type": "string",
+						"defaultValue": "CompaniesList"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T20:12:49Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Source_SimFinAPI')]",
+				"[concat(variables('factoryId'), '/datasets/SinkRAW_SimFin')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFRawToCurated')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "SinkRAW_Tiingo",
+								"type": "DatasetReference"
+							},
+							"name": "RawTiingo"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "SinkCurated_Tiingo",
+								"type": "DatasetReference"
+							},
+							"name": "CuratedTiingo"
+						}
+					],
+					"transformations": [],
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> RawTiingo\nRawTiingo sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SinkRAW_Tiingo')]",
+				"[concat(variables('factoryId'), '/datasets/SinkCurated_Tiingo')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OrchestrateEoDPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Stock Look Up",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "Source_ControlStockPortolfio",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Set ForEach Variable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Stock Look Up').output",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "EoDDataPipeline",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "EoDDataPipeline",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Set ForEach Variable",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Stock Look Up",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "StockCode",
+							"value": {
+								"value": "@activity('Stock Look Up').output",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"variables": {
+					"StockCode": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T19:57:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Source_ControlStockPortolfio')]",
+				"[concat(variables('factoryId'), '/pipelines/EoDDataPipeline')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RawToCurated')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Raw To Curated",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DFRawToCurated",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"RawTiingo": {
+										"TiingoFilename": "AAPL"
+									},
+									"CuratedTiingo": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T19:57:38Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DFRawToCurated')]"
+			]
+		}
+	]
+}
