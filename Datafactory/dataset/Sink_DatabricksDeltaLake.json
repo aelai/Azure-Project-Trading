@@ -9,7 +9,7 @@
 		"type": "AzureDatabricksDeltaLakeDataset",
 		"typeProperties": {
 			"database": "default",
-			"table": "aapl"
+			"table": ""
 		},
 		"schema": []
 	}
