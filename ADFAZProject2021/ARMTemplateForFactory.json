@@ -125,38 +125,6 @@
 								}
 							}
 						]
-					},
-					{
-						"name": "Stock LookUp",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "Source_ControlStockPortolfio",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
 					}
 				],
 				"parameters": {
@@ -167,6 +135,9 @@
 					"APIKey": {
 						"type": "string",
 						"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
+					},
+					"StockCode": {
+						"type": "string"
 					}
 				},
 				"annotations": [],
@@ -174,8 +145,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Source_TiingoAPI')]",
-				"[concat(variables('factoryId'), '/datasets/SinkRAW_Tiingo')]",
-				"[concat(variables('factoryId'), '/datasets/Source_ControlStockPortolfio')]"
+				"[concat(variables('factoryId'), '/datasets/SinkRAW_Tiingo')]"
 			]
 		},
 		{
@@ -217,11 +187,11 @@
 						}
 					},
 					{
-						"name": "ForEach1",
+						"name": "ForEach - Stockcode",
 						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "Set ForEach Variable",
+								"activity": "Stock Look Up",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -230,7 +200,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Stock Look Up').output",
+								"value": "@activity('Stock Look Up').output.item().Ticker",
 								"type": "Expression"
 							},
 							"isSequential": true,
@@ -250,26 +220,6 @@
 									}
 								}
 							]
-						}
-					},
-					{
-						"name": "Set ForEach Variable",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Stock Look Up",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "StockCode",
-							"value": {
-								"value": "@activity('Stock Look Up').output",
-								"type": "Expression"
-							}
 						}
 					}
 				],
@@ -596,27 +546,16 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "AzureProjectStockPortfolio.csv",
-						"folderPath": "CURATED/Control",
+						"fileName": "AzureProjectActiveStock.csv",
+						"folderPath": "CONTROL",
 						"container": "datalake"
 					},
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
+					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
 				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
 					{
 						"type": "String"
 					},
@@ -867,7 +806,7 @@
 							"name": "AlterRow1"
 						}
 					],
-					"script": "source(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'datalake',\n\tfolderPath: 'CURATED/EoDStockPrice/AAPL',\n\ttruncate: false,\n\tmergeSchema: true,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['date'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
+					"script": "source(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'datalake',\n\tfolderPath: 'CURATED/EoDStockPrice/AAPL',\n\ttruncate: false,\n\tmergeSchema: true,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['date'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
 				}
 			},
 			"dependsOn": [
