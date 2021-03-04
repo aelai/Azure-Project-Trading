@@ -34,7 +34,7 @@
 				}
 			},
 			{
-				"name": "ForEach - Stockcode",
+				"name": "ForEach - Ticker",
 				"type": "ForEach",
 				"dependsOn": [
 					{
@@ -47,7 +47,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Stock Look Up').output.item().Ticker",
+						"value": "@activity('Stock Look Up').output.value",
 						"type": "Expression"
 					},
 					"isSequential": true,
@@ -62,7 +62,10 @@
 									"referenceName": "EoDDataPipeline",
 									"type": "PipelineReference"
 								},
-								"waitOnCompletion": true
+								"waitOnCompletion": true,
+								"parameters": {
+									"Ticker": "AAPL"
+								}
 							}
 						}
 					]
@@ -70,8 +73,8 @@
 			}
 		],
 		"variables": {
-			"StockCode": {
-				"type": "String"
+			"Ticker": {
+				"type": "Array"
 			}
 		},
 		"annotations": [],
