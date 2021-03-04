@@ -10,27 +10,16 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "AzureProjectStockPortfolio.csv",
-				"folderPath": "CURATED/Control",
+				"fileName": "AzureProjectActiveStock.csv",
+				"folderPath": "CONTROL",
 				"container": "datalake"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
+			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
 		"schema": [
-			{
-				"type": "String"
-			},
-			{
-				"type": "String"
-			},
-			{
-				"type": "String"
-			},
-			{
-				"type": "String"
-			},
 			{
 				"type": "String"
 			},

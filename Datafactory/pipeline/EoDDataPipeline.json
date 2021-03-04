@@ -57,37 +57,6 @@
 						}
 					}
 				]
-			},
-			{
-				"name": "Stock LookUp",
-				"type": "Lookup",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
-					},
-					"dataset": {
-						"referenceName": "Source_ControlStockPortolfio",
-						"type": "DatasetReference"
-					},
-					"firstRowOnly": false
-				}
 			}
 		],
 		"parameters": {
@@ -98,6 +67,9 @@
 			"APIKey": {
 				"type": "string",
 				"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
+			},
+			"StockCode": {
+				"type": "string"
 			}
 		},
 		"annotations": [],

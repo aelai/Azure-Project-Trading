@@ -34,11 +34,11 @@
 				}
 			},
 			{
-				"name": "ForEach1",
+				"name": "ForEach - Stockcode",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Set ForEach Variable",
+						"activity": "Stock Look Up",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,7 +47,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Stock Look Up').output",
+						"value": "@activity('Stock Look Up').output.item().Ticker",
 						"type": "Expression"
 					},
 					"isSequential": true,
@@ -66,26 +66,6 @@
 							}
 						}
 					]
-				}
-			},
-			{
-				"name": "Set ForEach Variable",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Stock Look Up",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "StockCode",
-					"value": {
-						"value": "@activity('Stock Look Up').output",
-						"type": "Expression"
-					}
 				}
 			}
 		],
