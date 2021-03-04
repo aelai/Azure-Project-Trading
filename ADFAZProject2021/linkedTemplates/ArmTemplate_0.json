@@ -503,7 +503,10 @@
 								"referenceName": "SinkRAW_Tiingo",
 								"type": "DatasetReference",
 								"parameters": {
-									"TiingoFilename": "AAPL"
+									"TiingoFilename": {
+										"value": "@pipeline().parameters.Ticker",
+										"type": "Expression"
+									}
 								}
 							}
 						]
@@ -512,13 +515,13 @@
 				"parameters": {
 					"APIQuery": {
 						"type": "string",
-						"defaultValue": "daily/aapl/prices?startDate=2019-01-02/"
+						"defaultValue": "http://daily/aapl/prices?startDate=2019-01-02/"
 					},
 					"APIKey": {
 						"type": "string",
 						"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
 					},
-					"StockCode": {
+					"Ticker": {
 						"type": "string"
 					}
 				},
@@ -719,7 +722,7 @@
 						}
 					},
 					{
-						"name": "ForEach - Stockcode",
+						"name": "ForEach - Ticker",
 						"type": "ForEach",
 						"dependsOn": [
 							{
@@ -732,7 +735,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Stock Look Up').output.item().Ticker",
+								"value": "@activity('Stock Look Up').output.value",
 								"type": "Expression"
 							},
 							"isSequential": true,
@@ -748,7 +751,9 @@
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
-										"parameters": {}
+										"parameters": {
+											"Ticker": "AAPL"
+										}
 									}
 								}
 							]
@@ -756,8 +761,8 @@
 					}
 				],
 				"variables": {
-					"StockCode": {
-						"type": "String"
+					"Ticker": {
+						"type": "Array"
 					}
 				},
 				"annotations": [],
