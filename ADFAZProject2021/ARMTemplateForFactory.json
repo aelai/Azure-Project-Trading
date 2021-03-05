@@ -105,14 +105,13 @@
 								"referenceName": "Source_TiingoAPI",
 								"type": "DatasetReference",
 								"parameters": {
-									"Frequency": {
-										"value": "@pipeline().parameters.APIQuery",
-										"type": "Expression"
-									},
 									"APIKey": {
 										"value": "@pipeline().parameters.APIKey",
 										"type": "Expression"
-									}
+									},
+									"Ticker": "aapl",
+									"ReturnType": "prices",
+									"StartDate": "startDate=2019-01-02"
 								}
 							}
 						],
@@ -132,8 +131,7 @@
 				],
 				"parameters": {
 					"APIQuery": {
-						"type": "string",
-						"defaultValue": "https://api.tiingo.com/tiingo/daily/aapl/prices?startDate=2019-01-02/"
+						"type": "string"
 					},
 					"APIKey": {
 						"type": "string",
