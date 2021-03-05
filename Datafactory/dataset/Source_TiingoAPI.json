@@ -18,7 +18,7 @@
 				"type": "string",
 				"defaultValue": "aapl"
 			},
-			"Type": {
+			"ReturnType": {
 				"type": "string",
 				"defaultValue": "prices"
 			},
@@ -31,7 +31,7 @@
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "@concat(dataset().Frequency,'/',dataset().Ticker,'/',dataset().Frequency,'?',dataset().StartDate,'&token=',dataset().APIKey)",
+				"value": "@concat(dataset().Frequency,'/',dataset().Ticker,'/',dataset().ReturnType,'?',dataset().StartDate,'&token=',dataset().APIKey)",
 				"type": "Expression"
 			}
 		},
