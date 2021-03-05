@@ -6,20 +6,32 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"APIQuery": {
+			"Frequency": {
 				"type": "string",
-				"defaultValue": "daily/aapl/prices?startDate=2019-01-02/"
+				"defaultValue": "daily"
 			},
 			"APIKey": {
 				"type": "string",
 				"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
+			},
+			"Ticker": {
+				"type": "string",
+				"defaultValue": "aapl"
+			},
+			"Type": {
+				"type": "string",
+				"defaultValue": "prices"
+			},
+			"StartDate": {
+				"type": "string",
+				"defaultValue": "startDate=2019-01-02/"
 			}
 		},
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "@concat(dataset().APIQuery,'&token=',dataset().APIKey)",
+				"value": "@concat(dataset().Frequency,'/',dataset().Ticker,'/',dataset().Frequency,'?',dataset().StartDate,'&token=',dataset().APIKey)",
 				"type": "Expression"
 			}
 		},

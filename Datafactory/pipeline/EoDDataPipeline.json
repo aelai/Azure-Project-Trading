@@ -37,7 +37,7 @@
 						"referenceName": "Source_TiingoAPI",
 						"type": "DatasetReference",
 						"parameters": {
-							"APIQuery": {
+							"Frequency": {
 								"value": "@pipeline().parameters.APIQuery",
 								"type": "Expression"
 							},
