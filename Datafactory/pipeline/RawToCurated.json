@@ -51,9 +51,12 @@
 							"TiingoTicker": "AAPL"
 						}
 					},
-					"fieldList": [],
+					"fieldList": [
+						"childItems"
+					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -72,7 +75,11 @@
 						]
 					}
 				],
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "FilePath",
+					"value": "2021"
+				}
 			}
 		],
 		"variables": {
