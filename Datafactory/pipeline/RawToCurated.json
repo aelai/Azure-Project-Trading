@@ -18,6 +18,12 @@
 					"dataflow": {
 						"referenceName": "DFRawToCurated",
 						"type": "DataFlowReference",
+						"parameters": {
+							"Ticker": {
+								"value": "'@{variables('FilePath')}'",
+								"type": "Expression"
+							}
+						},
 						"datasetParameters": {
 							"RawTiingo": {
 								"TiingoTicker": "AAPL"
