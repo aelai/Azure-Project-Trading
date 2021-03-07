@@ -105,11 +105,15 @@
 								"referenceName": "Source_TiingoAPI",
 								"type": "DatasetReference",
 								"parameters": {
+									"Frequency": "daily",
 									"APIKey": {
 										"value": "@pipeline().parameters.APIKey",
 										"type": "Expression"
 									},
-									"Ticker": "aapl",
+									"Ticker": {
+										"value": "@pipeline().parameters.Ticker",
+										"type": "Expression"
+									},
 									"ReturnType": "prices",
 									"StartDate": "startDate=2019-01-02"
 								}
@@ -120,7 +124,7 @@
 								"referenceName": "SinkRAW_Tiingo",
 								"type": "DatasetReference",
 								"parameters": {
-									"TiingoFilename": {
+									"TiingoTicker": {
 										"value": "@pipeline().parameters.Ticker",
 										"type": "Expression"
 									}
@@ -130,9 +134,6 @@
 					}
 				],
 				"parameters": {
-					"APIQuery": {
-						"type": "string"
-					},
 					"APIKey": {
 						"type": "string",
 						"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
@@ -218,7 +219,10 @@
 										},
 										"waitOnCompletion": true,
 										"parameters": {
-											"Ticker": "AAPL"
+											"Ticker": {
+												"value": "@item().Ticker",
+												"type": "Expression"
+											}
 										}
 									}
 								}
@@ -263,9 +267,7 @@
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
-									"RawTiingo": {
-										"TiingoFilename": "AAPL"
-									},
+									"RawTiingo": {},
 									"CuratedTiingo": {}
 								}
 							},
@@ -487,7 +489,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"TiingoFilename": {
+					"TiingoTicker": {
 						"type": "string",
 						"defaultValue": "AAPL"
 					}
@@ -498,11 +500,11 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": {
-							"value": "@concat(dataset().TiingoFilename,'.json')",
+							"value": "@concat(dataset().TiingoTicker,'.json')",
 							"type": "Expression"
 						},
 						"folderPath": {
-							"value": "@concat('RAW/Tiingo/AAPL/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
+							"value": "@concat('RAW/Tiingo/',dataset().TiingoTicker,'/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
 							"type": "Expression"
 						},
 						"container": "datalake"
