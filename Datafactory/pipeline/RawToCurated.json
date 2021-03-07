@@ -17,12 +17,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DFRawToCurated",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"RawTiingo": {
-								"TiingoFilename": "AAPL"
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,

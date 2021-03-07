@@ -64,7 +64,10 @@
 								},
 								"waitOnCompletion": true,
 								"parameters": {
-									"Ticker": "AAPL"
+									"Ticker": {
+										"value": "@item().Ticker",
+										"type": "Expression"
+									}
 								}
 							}
 						}

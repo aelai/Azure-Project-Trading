@@ -6,9 +6,8 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"TiingoFilename": {
-				"type": "string",
-				"defaultValue": "AAPL"
+			"TiingoTicker": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
@@ -17,11 +16,11 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": {
-					"value": "@concat(dataset().TiingoFilename,'.json')",
+					"value": "@concat(dataset().TiingoTicker,'.json')",
 					"type": "Expression"
 				},
 				"folderPath": {
-					"value": "@concat('RAW/Tiingo/AAPL/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
+					"value": "@concat('RAW/Tiingo/',dataset().TiingoTicker,'/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
 					"type": "Expression"
 				},
 				"container": "datalake"
