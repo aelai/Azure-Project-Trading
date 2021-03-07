@@ -686,7 +686,7 @@
 							"name": "AlterRow1"
 						}
 					],
-					"script": "source(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'datalake',\n\tfolderPath: 'CURATED/EoDStockPrice/AAPL',\n\ttruncate: false,\n\tmergeSchema: true,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['date'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
+					"script": "parameters{\n\tTicker as string\n}\nsource(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('/RAW/Tiingo/',$Ticker,'/'))]) ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'datalake',\n\tfolderPath: 'CURATED/EoDStockPrice/AAPL',\n\ttruncate: false,\n\tmergeSchema: true,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['date'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
 				}
 			},
 			"dependsOn": [
@@ -809,9 +809,16 @@
 							"dataflow": {
 								"referenceName": "DFRawToCurated",
 								"type": "DataFlowReference",
-								"parameters": {},
+								"parameters": {
+									"Ticker": {
+										"value": "'@{variables('FilePath')}'",
+										"type": "Expression"
+									}
+								},
 								"datasetParameters": {
-									"RawTiingo": {},
+									"RawTiingo": {
+										"TiingoTicker": "AAPL"
+									},
 									"CuratedTiingo": {}
 								}
 							},
@@ -822,13 +829,157 @@
 							},
 							"traceLevel": "Fine"
 						}
+					},
+					{
+						"name": "Get Metadata",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "SinkRAW_Tiingo",
+								"type": "DatasetReference",
+								"parameters": {
+									"TiingoTicker": "AAPL"
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "JsonReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "FilePath",
+							"value": "2021"
+						}
 					}
 				],
+				"variables": {
+					"FilePath": {
+						"type": "String"
+					}
+				},
 				"annotations": [],
 				"lastPublishTime": "2021-02-27T19:57:38Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DFRawToCurated')]"
+				"[concat(variables('factoryId'), '/dataflows/DFRawToCurated')]",
+				"[concat(variables('factoryId'), '/datasets/SinkRAW_Tiingo')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OrchestrateRawToCuratedPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Stock Look Up",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "Source_ControlStockPortolfio",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach - Ticker",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Stock Look Up",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Stock Look Up').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "RawToCurated",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "RawToCurated",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {}
+									}
+								}
+							]
+						}
+					}
+				],
+				"variables": {
+					"Ticker": {
+						"type": "Array"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T19:57:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Source_ControlStockPortolfio')]",
+				"[concat(variables('factoryId'), '/pipelines/RawToCurated')]"
 			]
 		}
 	]
