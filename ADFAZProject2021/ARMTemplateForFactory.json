@@ -311,7 +311,12 @@
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
-										"parameters": {}
+										"parameters": {
+											"Ticker": {
+												"value": "@item().Ticker",
+												"type": "Expression"
+											}
+										}
 									}
 								}
 							]
@@ -355,13 +360,16 @@
 								"type": "DataFlowReference",
 								"parameters": {
 									"Ticker": {
-										"value": "'@{variables('FilePath')}'",
+										"value": "'@{pipeline().parameters.Ticker}'",
 										"type": "Expression"
 									}
 								},
 								"datasetParameters": {
 									"RawTiingo": {
-										"TiingoTicker": "AAPL"
+										"TiingoTicker": {
+											"value": "@pipeline().parameters.Ticker",
+											"type": "Expression"
+										}
 									},
 									"CuratedTiingo": {}
 								}
@@ -373,58 +381,13 @@
 							},
 							"traceLevel": "Fine"
 						}
-					},
-					{
-						"name": "Get Metadata",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "SinkRAW_Tiingo",
-								"type": "DatasetReference",
-								"parameters": {
-									"TiingoTicker": "AAPL"
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "JsonReadSettings"
-							}
-						}
-					},
-					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Get Metadata",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "FilePath",
-							"value": "2021"
-						}
 					}
 				],
+				"parameters": {
+					"Ticker": {
+						"type": "string"
+					}
+				},
 				"variables": {
 					"FilePath": {
 						"type": "String"
@@ -434,8 +397,7 @@
 				"lastPublishTime": "2021-02-27T19:57:38Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DFRawToCurated')]",
-				"[concat(variables('factoryId'), '/datasets/SinkRAW_Tiingo')]"
+				"[concat(variables('factoryId'), '/dataflows/DFRawToCurated')]"
 			]
 		},
 		{
@@ -974,7 +936,7 @@
 							"name": "AlterRow1"
 						}
 					],
-					"script": "parameters{\n\tTicker as string\n}\nsource(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('/RAW/Tiingo/',$Ticker,'/'))]) ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'datalake',\n\tfolderPath: 'CURATED/EoDStockPrice/AAPL',\n\ttruncate: false,\n\tmergeSchema: true,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['date'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
+					"script": "parameters{\n\tTicker as string\n}\nsource(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'datalake',\n\tfolderPath: (concat('CURATED/EoDStockPrice/',$Ticker)),\n\tmergeSchema: true,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['date'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
 				}
 			},
 			"dependsOn": [
