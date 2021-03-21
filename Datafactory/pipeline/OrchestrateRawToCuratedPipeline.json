@@ -65,7 +65,7 @@
 								"waitOnCompletion": true,
 								"parameters": {
 									"Ticker": {
-										"value": "@item()",
+										"value": "@item().Ticker",
 										"type": "Expression"
 									}
 								}
