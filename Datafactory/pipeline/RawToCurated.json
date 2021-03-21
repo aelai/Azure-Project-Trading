@@ -26,7 +26,10 @@
 						},
 						"datasetParameters": {
 							"RawTiingo": {
-								"TiingoTicker": "AAPL"
+								"TiingoTicker": {
+									"value": "@pipeline().parameters.Ticker",
+									"type": "Expression"
+								}
 							}
 						}
 					},
@@ -36,58 +39,13 @@
 					},
 					"traceLevel": "Fine"
 				}
-			},
-			{
-				"name": "Get Metadata",
-				"type": "GetMetadata",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataset": {
-						"referenceName": "SinkRAW_Tiingo",
-						"type": "DatasetReference",
-						"parameters": {
-							"TiingoTicker": "AAPL"
-						}
-					},
-					"fieldList": [
-						"childItems"
-					],
-					"storeSettings": {
-						"type": "AzureBlobStorageReadSettings",
-						"recursive": true,
-						"enablePartitionDiscovery": false
-					},
-					"formatSettings": {
-						"type": "JsonReadSettings"
-					}
-				}
-			},
-			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "Get Metadata",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "FilePath",
-					"value": "2021"
-				}
 			}
 		],
+		"parameters": {
+			"Ticker": {
+				"type": "string"
+			}
+		},
 		"variables": {
 			"FilePath": {
 				"type": "String"
