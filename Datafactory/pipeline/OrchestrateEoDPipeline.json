@@ -38,7 +38,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Stock Look Up",
+						"activity": "Filter Active Stocks",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,7 +47,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Stock Look Up').output.value",
+						"value": "@activity('Filter Active Stocks').output.value",
 						"type": "Expression"
 					},
 					"isSequential": true,
@@ -72,6 +72,29 @@
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "Filter Active Stocks",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Stock Look Up",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Stock Look Up').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().Active,'1')",
+						"type": "Expression"
+					}
 				}
 			}
 		],
