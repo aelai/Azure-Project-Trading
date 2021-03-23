@@ -1,9 +1,9 @@
 {
-	"name": "RawToCurated",
+	"name": "RawToBase",
 	"properties": {
 		"activities": [
 			{
-				"name": "Raw To Curated",
+				"name": "Raw To Base",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "DFRawToCurated",
+						"referenceName": "DFRawToBase",
 						"type": "DataFlowReference",
 						"parameters": {
 							"Ticker": {

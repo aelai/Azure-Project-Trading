@@ -1,5 +1,5 @@
 {
-	"name": "SinkCurated_Tiingo",
+	"name": "SinkBase_Tiingo",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "azureprojectstorage",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": "CURATED/EoDStockPrice/AAPL",
+				"folderPath": "BASE/EoDStockPrice/AAPL",
 				"container": "datalake"
 			},
 			"compressionCodec": "snappy"

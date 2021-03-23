@@ -1,5 +1,5 @@
 {
-	"name": "DFRawToCurated",
+	"name": "DFRawToBase",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {

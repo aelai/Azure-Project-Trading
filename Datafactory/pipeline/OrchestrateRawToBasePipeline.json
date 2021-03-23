@@ -1,5 +1,5 @@
 {
-	"name": "OrchestrateRawToCuratedPipeline",
+	"name": "OrchestrateRawToBasePipeline",
 	"properties": {
 		"activities": [
 			{
@@ -53,13 +53,13 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "RawToCurated",
+							"name": "RawToBase",
 							"type": "ExecutePipeline",
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "RawToCurated",
+									"referenceName": "RawToBase",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
