@@ -926,7 +926,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Stock Look Up').output.value",
+								"value": "@activity('Filter Active Stocks').output.value",
 								"type": "Expression"
 							},
 							"isSequential": true,
