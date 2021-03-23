@@ -1,0 +1,382 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADFAZProject2021"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/OrchestrateRawToBasePipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Stock Look Up",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "Source_ControlStockPortolfio",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "ForEach - Ticker",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Stock Look Up",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Stock Look Up').output.value",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "RawToBase",
+									"type": "ExecutePipeline",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"pipeline": {
+											"referenceName": "RawToBase",
+											"type": "PipelineReference"
+										},
+										"waitOnCompletion": true,
+										"parameters": {
+											"Ticker": {
+												"value": "@item().Ticker",
+												"type": "Expression"
+											}
+										}
+									}
+								}
+							]
+						}
+					}
+				],
+				"variables": {
+					"Ticker": {
+						"type": "Array"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T19:57:39Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/RawToBase')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RawToBase')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Raw To Base",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DFRawToBase",
+								"type": "DataFlowReference",
+								"parameters": {
+									"Ticker": {
+										"value": "'@{pipeline().parameters.Ticker}'",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"RawTiingo": {
+										"TiingoTicker": {
+											"value": "@pipeline().parameters.Ticker",
+											"type": "Expression"
+										}
+									}
+								}
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"parameters": {
+					"Ticker": {
+						"type": "string"
+					}
+				},
+				"variables": {
+					"FilePath": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T19:57:38Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DFRawToBase')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/GetSimFinTickers')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Tickers List",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings",
+									"filePattern": "setOfObjects"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['columns']"
+										},
+										"sink": {
+											"path": "$['columns']"
+										}
+									},
+									{
+										"source": {
+											"path": "$['data']"
+										},
+										"sink": {
+											"path": "$['data']"
+										}
+									}
+								],
+								"collectionReference": ""
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Source_SimFinAPI",
+								"type": "DatasetReference",
+								"parameters": {
+									"APIKeySimFin": {
+										"value": "@pipeline().parameters.APIKeySimFin",
+										"type": "Expression"
+									},
+									"APIQuery": {
+										"value": "@pipeline().parameters.APIQuery",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkRAW_SimFin",
+								"type": "DatasetReference",
+								"parameters": {
+									"SimFinFileName": {
+										"value": "@pipeline().parameters.SimFinFileName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"APIKeySimFin": {
+						"type": "string",
+						"defaultValue": "Sl7E4wzP0jWTSvTphg3PwShAwosvVaLj"
+					},
+					"APIQuery": {
+						"type": "string",
+						"defaultValue": "companies/list"
+					},
+					"SimFinFileName": {
+						"type": "string",
+						"defaultValue": "CompaniesList"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T20:12:49Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SinkBase_Tiingo')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureprojectstorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Parquet",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "BASE/EoDStockPrice/AAPL",
+						"container": "datalake"
+					},
+					"compressionCodec": "snappy"
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFRawToBase')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "SinkRAW_Tiingo",
+								"type": "DatasetReference"
+							},
+							"name": "RawTiingo"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "adlsazureproject2020",
+								"type": "LinkedServiceReference"
+							},
+							"name": "CuratedTiingo"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AlterRow1"
+						}
+					],
+					"script": "parameters{\n\tTicker as string\n}\nsource(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tfileSystem: 'datalake',\n\tfolderPath: (concat('CURATED/EoDStockPrice/',$Ticker)),\n\tmergeSchema: true,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:[($Ticker)],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> CuratedTiingo"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MasterOrchestrationPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Execute EoD Prices",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "OrchestrateEoDPipeline",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true
+						}
+					},
+					{
+						"name": "Execute Raw to Base",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "Execute EoD Prices",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "OrchestrateRawToBasePipeline",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true
+						}
+					}
+				],
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/OrchestrateRawToBasePipeline')]"
+			]
+		}
+	]
+}
