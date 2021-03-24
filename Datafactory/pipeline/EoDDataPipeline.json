@@ -48,7 +48,7 @@
 							},
 							"ReturnType": "prices",
 							"StartDate": {
-								"value": "@concat('startDate=',getPastTime(1,'Month'))",
+								"value": "@concat('startDate=',getPastTime(240,'Month'))",
 								"type": "Expression"
 							}
 						}
