@@ -107,7 +107,12 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "dataflow1",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"GetTickers": {
+								"SimFinFileName": "CompaniesList"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
