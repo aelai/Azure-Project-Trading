@@ -47,7 +47,10 @@
 								"type": "Expression"
 							},
 							"ReturnType": "prices",
-							"StartDate": "startDate=2019-01-02"
+							"StartDate": {
+								"value": "@concat('startDate=',getPastTime(1,'Month'))",
+								"type": "Expression"
+							}
 						}
 					}
 				],
