@@ -1,0 +1,204 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADFAZProject2021"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/GetSimFinTickers')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Tickers List",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings",
+									"copyBehavior": "FlattenHierarchy"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings",
+									"filePattern": "setOfObjects"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['columns']"
+										},
+										"sink": {
+											"path": "$['columns']"
+										}
+									},
+									{
+										"source": {
+											"path": "$['data']"
+										},
+										"sink": {
+											"path": "$['data']"
+										}
+									}
+								],
+								"collectionReference": ""
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Source_SimFinAPI",
+								"type": "DatasetReference",
+								"parameters": {
+									"APIKeySimFin": {
+										"value": "@pipeline().parameters.APIKeySimFin",
+										"type": "Expression"
+									},
+									"APIQuery": {
+										"value": "@pipeline().parameters.APIQuery",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SinkRAW_SimFin",
+								"type": "DatasetReference",
+								"parameters": {
+									"SimFinFileName": {
+										"value": "@pipeline().parameters.SimFinFileName",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "DF Tickers to Control",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Get Tickers List",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "DFUpdateActiveStocksList",
+								"type": "DataFlowReference",
+								"datasetParameters": {
+									"GetTickers": {
+										"SimFinFileName": "CompaniesList"
+									}
+								}
+							},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"parameters": {
+					"APIKeySimFin": {
+						"type": "string",
+						"defaultValue": "Sl7E4wzP0jWTSvTphg3PwShAwosvVaLj"
+					},
+					"APIQuery": {
+						"type": "string",
+						"defaultValue": "companies/list"
+					},
+					"SimFinFileName": {
+						"type": "string",
+						"defaultValue": "CompaniesList"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-02-27T20:12:49Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/DFUpdateActiveStocksList')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DFUpdateActiveStocksList')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "SinkRAW_SimFin",
+								"type": "DatasetReference"
+							},
+							"name": "GetTickers"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureProjectStockList",
+								"type": "DatasetReference"
+							},
+							"name": "WriteToControl"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AlterRow1"
+						},
+						{
+							"name": "FlattenDataArray"
+						},
+						{
+							"name": "CreateColumns"
+						}
+					],
+					"script": "source(output(\n\t\tcolumns as string[],\n\t\tdata as string[][]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> GetTickers\nCreateColumns alterRow(insertIf(true())) ~> AlterRow1\nGetTickers foldDown(unroll(data, data),\n\tmapColumn(\n\t\tdata\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenDataArray\nFlattenDataArray derive(SimFinID = data[1],\n\t\tTicker = data[2],\n\t\tExchange = 'NASDAQ',\n\t\tActive = 0) ~> CreateColumns\nAlterRow1 sink(input(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['AzureProjectActiveStock.csv'],\n\tmapColumn(\n\t\tTicker,\n\t\tExchange,\n\t\tActive\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> WriteToControl"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

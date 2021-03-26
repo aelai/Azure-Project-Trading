@@ -243,7 +243,7 @@
 						]
 					},
 					{
-						"name": "Data flow1",
+						"name": "DF Tickers to Control",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
@@ -263,14 +263,14 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "dataflow1",
+								"referenceName": "DFUpdateActiveStocksList",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
 									"GetTickers": {
 										"SimFinFileName": "CompaniesList"
 									},
-									"sink1": {}
+									"WriteToControl": {}
 								}
 							},
 							"staging": {},
@@ -302,7 +302,7 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Source_SimFinAPI')]",
 				"[concat(variables('factoryId'), '/datasets/SinkRAW_SimFin')]",
-				"[concat(variables('factoryId'), '/dataflows/dataflow1')]"
+				"[concat(variables('factoryId'), '/dataflows/DFUpdateActiveStocksList')]"
 			]
 		},
 		{
@@ -1120,7 +1120,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dataflow1')]",
+			"name": "[concat(parameters('factoryName'), '/DFUpdateActiveStocksList')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -1141,15 +1141,21 @@
 								"referenceName": "AzureProjectStockList",
 								"type": "DatasetReference"
 							},
-							"name": "sink1"
+							"name": "WriteToControl"
 						}
 					],
 					"transformations": [
 						{
 							"name": "AlterRow1"
+						},
+						{
+							"name": "FlattenDataArray"
+						},
+						{
+							"name": "CreateColumns"
 						}
 					],
-					"script": "source(output(\n\t\tcolumns as string[],\n\t\tdata as string[][]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> GetTickers\nGetTickers alterRow(upsertIf(true())) ~> AlterRow1\nAlterRow1 sink(input(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tmapColumn(\n\t\tcolumns,\n\t\tdata\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+					"script": "source(output(\n\t\tcolumns as string[],\n\t\tdata as string[][]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> GetTickers\nCreateColumns alterRow(insertIf(true())) ~> AlterRow1\nGetTickers foldDown(unroll(data, data),\n\tmapColumn(\n\t\tdata\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenDataArray\nFlattenDataArray derive(SimFinID = data[1],\n\t\tTicker = data[2],\n\t\tExchange = 'NASDAQ',\n\t\tActive = 0) ~> CreateColumns\nAlterRow1 sink(input(\n\t\tColumn_1 as string,\n\t\tColumn_2 as string,\n\t\tColumn_3 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['AzureProjectActiveStock.csv'],\n\tmapColumn(\n\t\tTicker,\n\t\tExchange,\n\t\tActive\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> WriteToControl"
 				}
 			},
 			"dependsOn": [
