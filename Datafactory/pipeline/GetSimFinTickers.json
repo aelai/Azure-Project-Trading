@@ -86,7 +86,7 @@
 				]
 			},
 			{
-				"name": "Data flow1",
+				"name": "DF Tickers to Control",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -106,7 +106,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "dataflow1",
+						"referenceName": "DFUpdateActiveStocksList",
 						"type": "DataFlowReference",
 						"datasetParameters": {
 							"GetTickers": {
