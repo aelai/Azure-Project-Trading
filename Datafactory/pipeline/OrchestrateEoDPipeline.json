@@ -67,7 +67,8 @@
 									"Ticker": {
 										"value": "@item().Ticker",
 										"type": "Expression"
-									}
+									},
+									"StartDate": "@item().LastUpdateDateKey"
 								}
 							}
 						}

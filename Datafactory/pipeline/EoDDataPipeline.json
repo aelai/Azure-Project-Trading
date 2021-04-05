@@ -48,7 +48,7 @@
 							},
 							"ReturnType": "prices",
 							"StartDate": {
-								"value": "@concat('startDate=',getPastTime(1,'Month'))",
+								"value": "@concat('startDate=',formatDateTime(pipeline().parameters.StartDate))",
 								"type": "Expression"
 							}
 						}
@@ -74,6 +74,9 @@
 				"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
 			},
 			"Ticker": {
+				"type": "string"
+			},
+			"StartDate": {
 				"type": "string"
 			}
 		},
