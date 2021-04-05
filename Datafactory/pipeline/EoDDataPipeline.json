@@ -48,7 +48,7 @@
 							},
 							"ReturnType": "prices",
 							"StartDate": {
-								"value": "@concat('startDate=',formatDateTime(pipeline().parameters.StartDate))",
+								"value": "@concat('startDate=',utcnow(pipeline().parameters.StartDate))",
 								"type": "Expression"
 							}
 						}
