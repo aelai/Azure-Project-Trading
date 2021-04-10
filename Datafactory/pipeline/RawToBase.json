@@ -18,18 +18,9 @@
 					"dataflow": {
 						"referenceName": "DFRawToBase",
 						"type": "DataFlowReference",
-						"parameters": {
-							"Ticker": {
-								"value": "'@{pipeline().parameters.Ticker}'",
-								"type": "Expression"
-							}
-						},
 						"datasetParameters": {
 							"RawTiingo": {
-								"TiingoTicker": {
-									"value": "@pipeline().parameters.Ticker",
-									"type": "Expression"
-								}
+								"TiingoTicker": "*"
 							}
 						}
 					},
@@ -41,11 +32,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"Ticker": {
-				"type": "string"
-			}
-		},
 		"variables": {
 			"FilePath": {
 				"type": "String"
