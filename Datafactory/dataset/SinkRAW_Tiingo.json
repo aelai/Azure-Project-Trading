@@ -21,7 +21,7 @@
 					"type": "Expression"
 				},
 				"folderPath": {
-					"value": "@concat('RAW/Tiingo/',dataset().TiingoTicker,'/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
+					"value": "@concat('RAW/Tiingo/',formatDateTime(utcnow(), 'yyyy'),formatDateTime(utcnow(), 'MM'),formatDateTime(utcnow(), 'dd'))",
 					"type": "Expression"
 				},
 				"container": "datalake"
