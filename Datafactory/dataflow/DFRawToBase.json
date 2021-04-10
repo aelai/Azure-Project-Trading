@@ -14,9 +14,9 @@
 			],
 			"sinks": [
 				{
-					"linkedService": {
-						"referenceName": "azureprojectstorage",
-						"type": "LinkedServiceReference"
+					"dataset": {
+						"referenceName": "Base_EoDPrices",
+						"type": "DatasetReference"
 					},
 					"name": "BASETiingo"
 				}
@@ -29,7 +29,7 @@
 					"name": "NewColTicker"
 				}
 			],
-			"script": "source(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\trowUrlColumn: 'FilePath',\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('RAW/Tiingo/20210410/','*'))]) ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> UpsertbyRow\nUpsertbyRow derive(Ticker = left(substring(FilePath,22), (length(substring(FilePath,22)) - 5 ) )) ~> NewColTicker\nNewColTicker sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tcontainer: 'datalake',\n\tfolderPath: (concat('BASE/EoDStockPrice/','test.csv')),\n\tmergeSchema: true,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['date'],\n\tpartitionBy('key',\n\t\t0,\n\t\tTicker\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> BASETiingo"
+			"script": "source(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\trowUrlColumn: 'FilePath',\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('RAW/Tiingo/20210410/','*'))]) ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> UpsertbyRow\nUpsertbyRow derive(Ticker = left(substring(FilePath,22), (length(substring(FilePath,22)) - 5 ) )) ~> NewColTicker\nNewColTicker sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionBy('key',\n\t\t0,\n\t\tTicker\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> BASETiingo"
 		}
 	}
 }
