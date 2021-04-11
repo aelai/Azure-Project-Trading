@@ -17,12 +17,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DFRawToBase",
-						"type": "DataFlowReference",
-						"datasetParameters": {
-							"RawTiingo": {
-								"TiingoTicker": "*"
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
@@ -32,9 +27,9 @@
 				}
 			}
 		],
-		"variables": {
-			"FilePath": {
-				"type": "String"
+		"parameters": {
+			"LatestTiingoFolder": {
+				"type": "string"
 			}
 		},
 		"annotations": [],

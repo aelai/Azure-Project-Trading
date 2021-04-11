@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Metadata1",
+				"name": "Get Lasest RAW Date Folder",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
@@ -16,17 +16,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "SinkRAW_Tiingo",
-						"type": "DatasetReference",
-						"parameters": {
-							"TiingoTicker": "AAPL"
-						}
+						"referenceName": "RawTiingo",
+						"type": "DatasetReference"
 					},
 					"fieldList": [
-						"itemName"
+						"childItems"
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -35,11 +33,11 @@
 				}
 			},
 			{
-				"name": "Set variable1",
-				"type": "SetVariable",
+				"name": "ForEach Tiingo Folder",
+				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata1",
+						"activity": "Get Lasest RAW Date Folder",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,17 +45,80 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "Ticker",
-					"value": {
-						"value": "@activity('Get Metadata1').output.itemname",
+					"items": {
+						"value": "@activity('Get Lasest RAW Date Folder').output.childitems",
 						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Append variable1",
+							"type": "AppendVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "ListTiingoFolder",
+								"value": {
+									"value": "@int(item().name)",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [
+								{
+									"activity": "Append variable1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "LatestTiingoFolder",
+								"value": {
+									"value": "@string(max(variables('ListTiingoFolder')))",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Execute Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "ForEach Tiingo Folder",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "RawToBase",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"LatestTiingoFolder": {
+							"value": "@variables('LatestTiingoFolder')",
+							"type": "Expression"
+						}
 					}
 				}
 			}
 		],
 		"variables": {
-			"Ticker": {
+			"LatestTiingoFolder": {
 				"type": "String"
+			},
+			"ListTiingoFolder": {
+				"type": "Array"
 			}
 		},
 		"annotations": [],
