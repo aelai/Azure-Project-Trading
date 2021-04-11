@@ -3,8 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Stock Look Up",
-				"type": "Lookup",
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -15,71 +15,31 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
-						}
-					},
 					"dataset": {
-						"referenceName": "Source_ControlStockPortolfio",
-						"type": "DatasetReference"
-					},
-					"firstRowOnly": false
-				}
-			},
-			{
-				"name": "ForEach - Ticker",
-				"type": "ForEach",
-				"dependsOn": [
-					{
-						"activity": "Filter Active Stocks",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"items": {
-						"value": "@activity('Filter Active Stocks').output.value",
-						"type": "Expression"
-					},
-					"isSequential": true,
-					"activities": [
-						{
-							"name": "RawToBase",
-							"type": "ExecutePipeline",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"pipeline": {
-									"referenceName": "RawToBase",
-									"type": "PipelineReference"
-								},
-								"waitOnCompletion": true,
-								"parameters": {
-									"Ticker": {
-										"value": "@item().Ticker",
-										"type": "Expression"
-									}
-								}
-							}
+						"referenceName": "SinkRAW_Tiingo",
+						"type": "DatasetReference",
+						"parameters": {
+							"TiingoTicker": "AAPL"
 						}
-					]
+					},
+					"fieldList": [
+						"itemName"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "JsonReadSettings"
+					}
 				}
 			},
 			{
-				"name": "Filter Active Stocks",
-				"type": "Filter",
+				"name": "Set variable1",
+				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Stock Look Up",
+						"activity": "Get Metadata1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -87,12 +47,9 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"items": {
-						"value": "@activity('Stock Look Up').output.value",
-						"type": "Expression"
-					},
-					"condition": {
-						"value": "@equals(item().Active,'1')",
+					"variableName": "Ticker",
+					"value": {
+						"value": "@activity('Get Metadata1').output.itemname",
 						"type": "Expression"
 					}
 				}
@@ -100,7 +57,7 @@
 		],
 		"variables": {
 			"Ticker": {
-				"type": "Array"
+				"type": "String"
 			}
 		},
 		"annotations": [],
