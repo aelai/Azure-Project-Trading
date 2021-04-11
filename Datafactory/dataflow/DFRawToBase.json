@@ -36,13 +36,16 @@
 					"name": "NewColTicker"
 				},
 				{
-					"name": "FilterForActiveStocks"
+					"name": "UpdateLastUpdateDateKey"
 				},
 				{
-					"name": "AlterRow1"
+					"name": "ConditionalSplit1"
+				},
+				{
+					"name": "UnionActiveStockList"
 				}
 			],
-			"script": "source(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\trowUrlColumn: 'FilePath',\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('RAW/Tiingo/20210410/','*'))]) ~> RawTiingo\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100) ~> GetActiveStockList\nRawTiingo alterRow(upsertIf(true())) ~> UpsertbyRow\nUpsertbyRow derive(Ticker = left(substring(FilePath,22), (length(substring(FilePath,22)) - 5 ) )) ~> NewColTicker\nGetActiveStockList filter(equals(toString(byName('Active')),'1')) ~> FilterForActiveStocks\nFilterForActiveStocks alterRow(updateIf(lesser(toString(byName('LastUpdateDateKey')),''))) ~> AlterRow1\nNewColTicker sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tcontainer: 'datalake',\n\tfolderPath: 'BASE/EoDStockPrice',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:true,\n\tinsertable:true,\n\tupdateable:true,\n\tupsertable:true,\n\tkeys:['date'],\n\tpartitionFileNames:['TiingoEoDPrices.csv'],\n\tpartitionBy('key',\n\t\t0,\n\t\tTicker\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> BASETiingo"
+			"script": "source(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\trowUrlColumn: 'FilePath',\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('RAW/Tiingo/20210410/','*'))]) ~> RawTiingo\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100) ~> GetActiveStockList\nRawTiingo alterRow(upsertIf(true())) ~> UpsertbyRow\nUpsertbyRow derive(Ticker = left(substring(FilePath,22), (length(substring(FilePath,22)) - 5 ) )) ~> NewColTicker\nConditionalSplit1@ActiveStocks derive(LastUpdateDateKey = '99999999') ~> UpdateLastUpdateDateKey\nGetActiveStockList split(equals(toString(byName('Active')),'1'),\n\tdisjoint: false) ~> ConditionalSplit1@(ActiveStocks, NonActiveStocks)\nUpdateLastUpdateDateKey, ConditionalSplit1@NonActiveStocks union(byName: true)~> UnionActiveStockList\nNewColTicker sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcompressionType: 'snappy',\n\tcompressionLevel: 'Fastest',\n\tcontainer: 'datalake',\n\tfolderPath: 'BASE/EoDStockPrice',\n\tmergeSchema: false,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:true,\n\tinsertable:true,\n\tupdateable:true,\n\tupsertable:true,\n\tkeys:['date'],\n\tpartitionFileNames:['TiingoEoDPrices.csv'],\n\tpartitionBy('key',\n\t\t0,\n\t\tTicker\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> BASETiingo"
 		}
 	}
 }
