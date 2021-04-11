@@ -1,0 +1,19 @@
+{
+	"name": "RawTiingo",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureprojectstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "RAW/Tiingo",
+				"container": "datalake"
+			}
+		},
+		"schema": {}
+	}
+}
