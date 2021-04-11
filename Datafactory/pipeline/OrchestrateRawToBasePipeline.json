@@ -105,7 +105,7 @@
 					},
 					"waitOnCompletion": true,
 					"parameters": {
-						"LatestTiingoFolder": {
+						"TiingoFolder": {
 							"value": "@variables('LatestTiingoFolder')",
 							"type": "Expression"
 						}

@@ -17,7 +17,13 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DFRawToBase",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"LatestTiingoFolder": {
+								"value": "'@{pipeline().parameters.TiingoFolder}'",
+								"type": "Expression"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -28,7 +34,7 @@
 			}
 		],
 		"parameters": {
-			"LatestTiingoFolder": {
+			"TiingoFolder": {
 				"type": "string"
 			}
 		},
