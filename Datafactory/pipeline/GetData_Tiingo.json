@@ -57,7 +57,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"TiingoFileName": {
-								"value": "@concat(\npipeline().parameters.TiingoTicker,\n'json'\n)",
+								"value": "@concat(\npipeline().parameters.TiingoTicker,\n'.json'\n)",
 								"type": "Expression"
 							},
 							"TiingoRAWFolder": {
