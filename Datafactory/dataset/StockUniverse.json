@@ -1,0 +1,37 @@
+{
+	"name": "StockUniverse",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureprojectstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "StockUniverse.csv",
+				"folderPath": "CONTROL",
+				"container": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "Ticker",
+				"type": "String"
+			},
+			{
+				"name": "IsActive",
+				"type": "String"
+			},
+			{
+				"name": "LastUpdateDate",
+				"type": "String"
+			}
+		]
+	}
+}

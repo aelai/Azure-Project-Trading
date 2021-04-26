@@ -1,0 +1,12 @@
+{
+	"name": "TiingoAPI",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_Tiingo",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
