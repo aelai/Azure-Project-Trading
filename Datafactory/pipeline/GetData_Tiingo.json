@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy data1",
+				"name": "Copy Tiingo API Data",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -26,11 +26,25 @@
 				"inputs": [
 					{
 						"referenceName": "TiingoAPI",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"TiingoTargetDataURL": {
+								"value": "@concat(\n'daily/',\npipeline().parameters.TiingoTicker,\n'/prices?startDate=',\npipeline().parameters.TiingoStartDate,\n'&endDate=',\nutcnow('yyy-MM-dd')\n)",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			}
 		],
+		"parameters": {
+			"TiingoTicker": {
+				"type": "string"
+			},
+			"TiingoStartDate": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }

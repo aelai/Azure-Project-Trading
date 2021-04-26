@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Lookup Active Stock Universe",
+				"name": "Lookup Stock Universe",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -38,7 +38,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Lookup Active Stock Universe",
+						"activity": "Filter for Active Tickers",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,7 +47,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup Active Stock Universe').output.value",
+						"value": "@activity('Filter for Active Tickers').output.value",
 						"type": "Expression"
 					},
 					"batchCount": 5,
@@ -58,10 +58,47 @@
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
-								"waitOnCompletion": true
+								"pipeline": {
+									"referenceName": "GetData_Tiingo",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"TiingoTicker": {
+										"value": "@item().Ticker",
+										"type": "Expression"
+									},
+									"TiingoStartDate": {
+										"value": "@formatDateTime(item().LastUpdateDate,'yyyy-MM-dd')",
+										"type": "Expression"
+									}
+								}
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "Filter for Active Tickers",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Lookup Stock Universe",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup Stock Universe').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(\nactivity('Lookup Stock Universe').output.IsActive,\n'1'\n)",
+						"type": "Expression"
+					}
 				}
 			}
 		],

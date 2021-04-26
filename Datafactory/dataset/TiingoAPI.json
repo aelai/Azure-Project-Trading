@@ -5,8 +5,19 @@
 			"referenceName": "LinkedService_Tiingo",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"TiingoTargetDataURL": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@dataset().TiingoTargetDataURL",
+				"type": "Expression"
+			}
+		},
 		"schema": []
 	}
 }
