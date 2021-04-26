@@ -47,7 +47,17 @@
 				"outputs": [
 					{
 						"referenceName": "TiingoDataFile",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"TiingoFileName": {
+								"value": "@concat(\npipeline().parameters.TiingoTicker,\n'json'\n)",
+								"type": "Expression"
+							},
+							"TiingoRAWFolder": {
+								"value": "@utcnow('yyyyMMdd')",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			}

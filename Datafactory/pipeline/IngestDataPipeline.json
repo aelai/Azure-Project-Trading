@@ -50,6 +50,7 @@
 						"value": "@activity('Filter for Active Tickers').output.value",
 						"type": "Expression"
 					},
+					"isSequential": false,
 					"batchCount": 5,
 					"activities": [
 						{
@@ -96,7 +97,7 @@
 						"type": "Expression"
 					},
 					"condition": {
-						"value": "@equals(\nactivity('Lookup Stock Universe').output.IsActive,\n'1'\n)",
+						"value": "@equals(\nitem().IsActive,\n'1'\n)",
 						"type": "Expression"
 					}
 				}
