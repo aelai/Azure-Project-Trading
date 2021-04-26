@@ -5,7 +5,14 @@
 			{
 				"name": "Copy Tiingo API Data",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set Api Key",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -38,7 +45,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"TiingoTargetDataURL": {
-								"value": "@concat(\n'daily/',\npipeline().parameters.TiingoTicker,\n'/prices?startDate=',\npipeline().parameters.TiingoStartDate,\n'&endDate=',\nutcnow('yyy-MM-dd')\n)",
+								"value": "@concat(\n'daily/',\npipeline().parameters.TiingoTicker,\n'/prices?startDate=',\npipeline().parameters.TiingoStartDate,\n'&endDate=',\nutcnow('yyy-MM-dd'),\n'&token=',\nvariables('TiingoAPIKey')\n)",
 								"type": "Expression"
 							}
 						}
@@ -60,6 +67,47 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "Get Tiingo API Token",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://kvazureproject.vault.azure.net/Secrets/TiingoAPIKey?api-version=7.1",
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "Set Api Key",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Get Tiingo API Token",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "TiingoAPIKey",
+					"value": {
+						"value": "@activity('Get Tiingo API Token').output.Value",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -68,6 +116,11 @@
 			},
 			"TiingoStartDate": {
 				"type": "string"
+			}
+		},
+		"variables": {
+			"TiingoAPIKey": {
+				"type": "String"
 			}
 		},
 		"annotations": []
