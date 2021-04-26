@@ -1,0 +1,77 @@
+{
+	"name": "TiingoDataFile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureprojectstorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"TiingoFileName": {
+				"type": "string"
+			},
+			"TiingoRAWFolder": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().TiingoFileName",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@concat(\n'RAW/Tiingo',\ndataset().TiingoRAWFolder\n)",
+					"type": "Expression"
+				},
+				"container": "datalake"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"date": {
+					"type": "string"
+				},
+				"close": {
+					"type": "number"
+				},
+				"high": {
+					"type": "number"
+				},
+				"low": {
+					"type": "number"
+				},
+				"open": {
+					"type": "number"
+				},
+				"volume": {
+					"type": "integer"
+				},
+				"adjClose": {
+					"type": "number"
+				},
+				"adjHigh": {
+					"type": "number"
+				},
+				"adjLow": {
+					"type": "number"
+				},
+				"adjOpen": {
+					"type": "number"
+				},
+				"adjVolume": {
+					"type": "integer"
+				},
+				"divCash": {
+					"type": "number"
+				},
+				"splitFactor": {
+					"type": "number"
+				}
+			}
+		}
+	}
+}
