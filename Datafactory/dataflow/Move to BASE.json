@@ -1,0 +1,20 @@
+{
+	"name": "Move to BASE",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "TiingoFileRawLocation",
+						"type": "DatasetReference"
+					},
+					"name": "RAWTiingo"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"script": "parameters{\n\tRawFolder as string\n}\nsource(output(\n\t\tcolumns as string[],\n\t\tdata as string[][],\n\t\tdate as string,\n\t\tclose as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tvolume as string,\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as string,\n\t\tdivCash as double,\n\t\tsplitFactor as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('Tiingo/',$RawFolder))]) ~> RAWTiingo"
+		}
+	}
+}

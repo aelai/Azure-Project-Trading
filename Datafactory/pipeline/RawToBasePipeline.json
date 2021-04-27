@@ -86,7 +86,7 @@
 				}
 			},
 			{
-				"name": "Data flow1",
+				"name": "DF Raw to Base",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
@@ -105,6 +105,16 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Move to BASE",
+						"type": "DataFlowReference",
+						"parameters": {
+							"RawFolder": {
+								"value": "'@{variables('LatestRAWTiingoFolder')}'",
+								"type": "Expression"
+							}
+						}
+					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
