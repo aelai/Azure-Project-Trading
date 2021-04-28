@@ -1,0 +1,23 @@
+{
+	"name": "TiingoEoDPricesBASE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "azureprojectstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "BASE/EoDStockPrice",
+				"container": "datalake"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
