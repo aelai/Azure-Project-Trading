@@ -11,22 +11,6 @@
 			"type": "string",
 			"defaultValue": "https://kvazureproject.vault.azure.net/"
 		},
-		"LinkedService_SimFin_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://simfin.com/api/v2/"
-		},
-		"LinkedService_SimFin_properties_typeProperties_servicePrincipalId": {
-			"type": "string",
-			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
-		},
-		"LinkedService_SimFin_properties_typeProperties_tenant": {
-			"type": "string",
-			"defaultValue": "75099764-499a-4c9a-be3b-eb20119a46dd"
-		},
-		"LinkedService_SimFin_properties_typeProperties_aadResourceId": {
-			"type": "string",
-			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
-		},
 		"LinkedService_Tiingo_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://api.tiingo.com/tiingo/"
@@ -40,18 +24,6 @@
 			"defaultValue": "75099764-499a-4c9a-be3b-eb20119a46dd"
 		},
 		"LinkedService_Tiingo_properties_typeProperties_aadResourceId": {
-			"type": "string",
-			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
-		},
-		"adlsazureproject2020_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://adlsazureproject2020.dfs.core.windows.net"
-		},
-		"adlsazureproject2020_properties_typeProperties_tenant": {
-			"type": "string",
-			"defaultValue": "75099764-499a-4c9a-be3b-eb20119a46dd"
-		},
-		"adlsazureproject2020_properties_typeProperties_servicePrincipalId": {
 			"type": "string",
 			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
 		},
@@ -76,58 +48,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LinkedService_DatabricksDeltaLake')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureDatabricksDeltaLake",
-				"typeProperties": {
-					"domain": "https://adb-7520443299832378.18.azuredatabricks.net",
-					"clusterId": "0227-171820-gutsy351",
-					"accessToken": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LinkedService_KeyVault",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "DatabricksDeltaAccesstoken"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LinkedService_SimFin')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('LinkedService_SimFin_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "AadServicePrincipal",
-					"servicePrincipalId": "[parameters('LinkedService_SimFin_properties_typeProperties_servicePrincipalId')]",
-					"servicePrincipalKey": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LinkedService_KeyVault",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "ServicePrincipleSecret"
-					},
-					"tenant": "[parameters('LinkedService_SimFin_properties_typeProperties_tenant')]",
-					"aadResourceId": "[parameters('LinkedService_SimFin_properties_typeProperties_aadResourceId')]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/LinkedService_Tiingo')]",
@@ -158,32 +78,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/adlsazureproject2020')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobFS",
-				"typeProperties": {
-					"url": "[parameters('adlsazureproject2020_properties_typeProperties_url')]",
-					"tenant": "[parameters('adlsazureproject2020_properties_typeProperties_tenant')]",
-					"servicePrincipalId": "[parameters('adlsazureproject2020_properties_typeProperties_servicePrincipalId')]",
-					"servicePrincipalCredentialType": "ServicePrincipalKey",
-					"servicePrincipalCredential": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LinkedService_KeyVault",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "ServicePrincipleSecret"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/azureprojectstorage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -206,7 +100,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureProjectStockList')]",
+			"name": "[concat(parameters('factoryName'), '/StockUniverse')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -219,6 +113,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "StockUniverse.csv",
 						"folderPath": "CONTROL",
 						"container": "datalake"
 					},
@@ -227,39 +122,55 @@
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": []
+				"schema": [
+					{
+						"name": "Ticker",
+						"type": "String"
+					},
+					{
+						"name": "IsActive",
+						"type": "String"
+					},
+					{
+						"name": "LastUpdateDate",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SinkBase_Tiingo')]",
+			"name": "[concat(parameters('factoryName'), '/TiingoAPI')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "azureprojectstorage",
+					"referenceName": "LinkedService_Tiingo",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"TiingoTargetDataURL": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
-				"type": "Parquet",
+				"type": "RestResource",
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": "BASE/EoDStockPrice/AAPL",
-						"container": "datalake"
-					},
-					"compressionCodec": "snappy"
+					"relativeUrl": {
+						"value": "@dataset().TiingoTargetDataURL",
+						"type": "Expression"
+					}
 				},
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
+				"[concat(variables('factoryId'), '/linkedServices/LinkedService_Tiingo')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SinkRAW_SimFin')]",
+			"name": "[concat(parameters('factoryName'), '/TiingoDataFile')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -268,7 +179,10 @@
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"SimFinFileName": {
+					"TiingoFileName": {
+						"type": "string"
+					},
+					"TiingoRAWFolder": {
 						"type": "string"
 					}
 				},
@@ -278,13 +192,80 @@
 					"location": {
 						"type": "AzureBlobStorageLocation",
 						"fileName": {
-							"value": "@concat(dataset().SimFinFileName,'.json')",
+							"value": "@dataset().TiingoFileName",
 							"type": "Expression"
 						},
 						"folderPath": {
-							"value": "@concat('RAW/SimFin/Tickers/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
+							"value": "@concat(\n'RAW/Tiingo/',\ndataset().TiingoRAWFolder\n)",
 							"type": "Expression"
 						},
+						"container": "datalake"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"date": {
+							"type": "string"
+						},
+						"close": {
+							"type": "number"
+						},
+						"high": {
+							"type": "number"
+						},
+						"low": {
+							"type": "number"
+						},
+						"open": {
+							"type": "number"
+						},
+						"volume": {
+							"type": "integer"
+						},
+						"adjClose": {
+							"type": "number"
+						},
+						"adjHigh": {
+							"type": "number"
+						},
+						"adjLow": {
+							"type": "number"
+						},
+						"adjOpen": {
+							"type": "number"
+						},
+						"adjVolume": {
+							"type": "integer"
+						},
+						"divCash": {
+							"type": "number"
+						},
+						"splitFactor": {
+							"type": "number"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TiingoFileRawLocation')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "azureprojectstorage",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "RAW/Tiingo",
 						"container": "datalake"
 					}
 				},
@@ -305,6 +286,45 @@
 									"type": "integer"
 								}
 							}
+						},
+						"date": {
+							"type": "string"
+						},
+						"close": {
+							"type": "number"
+						},
+						"high": {
+							"type": "number"
+						},
+						"low": {
+							"type": "number"
+						},
+						"open": {
+							"type": "number"
+						},
+						"volume": {
+							"type": "integer"
+						},
+						"adjClose": {
+							"type": "number"
+						},
+						"adjHigh": {
+							"type": "number"
+						},
+						"adjLow": {
+							"type": "number"
+						},
+						"adjOpen": {
+							"type": "number"
+						},
+						"adjVolume": {
+							"type": "integer"
+						},
+						"divCash": {
+							"type": "number"
+						},
+						"splitFactor": {
+							"type": "number"
 						}
 					}
 				}
@@ -314,65 +334,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/SinkRAW_Tiingo')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "azureprojectstorage",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"TiingoTicker": {
-						"type": "string",
-						"defaultValue": "AAPL"
-					}
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@concat(dataset().TiingoTicker,'.json')",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@concat('RAW/Tiingo/',dataset().TiingoTicker,'/', formatDateTime(utcnow(), 'yyy'),'/', formatDateTime(utcnow(), 'MM'),'/', formatDateTime(utcnow(), 'dd'))",
-							"type": "Expression"
-						},
-						"container": "datalake"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Sink_DatabricksDeltaLake')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LinkedService_DatabricksDeltaLake",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureDatabricksDeltaLakeDataset",
-				"typeProperties": {
-					"database": "default",
-					"table": ""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_DatabricksDeltaLake')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Source_ControlStockPortolfio')]",
+			"name": "[concat(parameters('factoryName'), '/TiingoEoDPricesBASE')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -385,8 +347,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "AzureProjectActiveStock.csv",
-						"folderPath": "CONTROL",
+						"folderPath": "BASE/EoDStockPrice",
 						"container": "datalake"
 					},
 					"columnDelimiter": ",",
@@ -394,108 +355,29 @@
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": [
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					},
-					{
-						"type": "String"
-					}
-				]
+				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Source_SimFinAPI')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LinkedService_SimFin",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"APIKeySimFin": {
-						"type": "string"
-					},
-					"APIQuery": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": {
-						"value": "@concat(dataset().APIQuery,'?api-key=',dataset().APIKeySimFin)",
-						"type": "Expression"
-					}
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_SimFin')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Source_TiingoAPI')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LinkedService_Tiingo",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Frequency": {
-						"type": "string",
-						"defaultValue": "daily"
-					},
-					"APIKey": {
-						"type": "string",
-						"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
-					},
-					"Ticker": {
-						"type": "string",
-						"defaultValue": "aapl"
-					},
-					"ReturnType": {
-						"type": "string",
-						"defaultValue": "prices"
-					},
-					"StartDate": {
-						"type": "string",
-						"defaultValue": "startDate=2019-01-02"
-					}
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {
-					"relativeUrl": {
-						"value": "@concat(dataset().Frequency,'/',dataset().Ticker,'/',dataset().ReturnType,'?',dataset().StartDate,'&token=',dataset().APIKey)",
-						"type": "Expression"
-					}
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_Tiingo')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/EoDDataPipeline')]",
+			"name": "[concat(parameters('factoryName'), '/GetData_Tiingo')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Eod Data from API",
+						"name": "Copy Tiingo API Data",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Set Api Key",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -524,21 +406,11 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "Source_TiingoAPI",
+								"referenceName": "TiingoAPI",
 								"type": "DatasetReference",
 								"parameters": {
-									"Frequency": "daily",
-									"APIKey": {
-										"value": "@pipeline().parameters.APIKey",
-										"type": "Expression"
-									},
-									"Ticker": {
-										"value": "@pipeline().parameters.Ticker",
-										"type": "Expression"
-									},
-									"ReturnType": "prices",
-									"StartDate": {
-										"value": "@concat('startDate=',\nutcnow(\npipeline().parameters.StartDate\n))",
+									"TiingoTargetDataURL": {
+										"value": "@concat(\n'daily/',\npipeline().parameters.TiingoTicker,\n'/prices?startDate=',\npipeline().parameters.TiingoStartDate,\n'&endDate=',\nutcnow('yyy-MM-dd'),\n'&token=',\nvariables('TiingoAPIKey')\n)",
 										"type": "Expression"
 									}
 								}
@@ -546,149 +418,24 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "SinkRAW_Tiingo",
+								"referenceName": "TiingoDataFile",
 								"type": "DatasetReference",
 								"parameters": {
-									"TiingoTicker": {
-										"value": "@pipeline().parameters.Ticker",
+									"TiingoFileName": {
+										"value": "@concat(\npipeline().parameters.TiingoTicker,\n'.json'\n)",
+										"type": "Expression"
+									},
+									"TiingoRAWFolder": {
+										"value": "@utcnow('yyyyMMdd')",
 										"type": "Expression"
 									}
 								}
 							}
 						]
-					}
-				],
-				"parameters": {
-					"APIKey": {
-						"type": "string",
-						"defaultValue": "ad7a3439179844131f3a468e9c90d23dec925ac3"
 					},
-					"Ticker": {
-						"type": "string"
-					},
-					"StartDate": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2021-02-27T19:57:38Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Source_TiingoAPI')]",
-				"[concat(variables('factoryId'), '/datasets/SinkRAW_Tiingo')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DFRawToBase')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "SinkRAW_Tiingo",
-								"type": "DatasetReference"
-							},
-							"name": "RawTiingo"
-						}
-					],
-					"sinks": [
-						{
-							"linkedService": {
-								"referenceName": "azureprojectstorage",
-								"type": "LinkedServiceReference"
-							},
-							"name": "BASETiingo"
-						}
-					],
-					"transformations": [
-						{
-							"name": "UpsertbyRow"
-						}
-					],
-					"script": "parameters{\n\tTicker as string\n}\nsource(output(\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as integer,\n\t\tclose as double,\n\t\tdate as string,\n\t\tdivCash as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tsplitFactor as double,\n\t\tvolume as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> RawTiingo\nRawTiingo alterRow(upsertIf(true())) ~> UpsertbyRow\nUpsertbyRow sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'delta',\n\tcontainer: 'datalake',\n\tfolderPath: (concat('BASE/EoDStockPrice/',$Ticker)),\n\tmergeSchema: true,\n\tautoCompact: false,\n\toptimizedWrite: false,\n\tvacuum: 0,\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['date'],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> BASETiingo"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SinkRAW_Tiingo')]",
-				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DFUpdateActiveStocksList')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "SinkRAW_SimFin",
-								"type": "DatasetReference"
-							},
-							"name": "GetTickers"
-						},
-						{
-							"dataset": {
-								"referenceName": "Source_ControlStockPortolfio",
-								"type": "DatasetReference"
-							},
-							"name": "GetControlFile"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureProjectStockList",
-								"type": "DatasetReference"
-							},
-							"name": "SinkToControlFile"
-						}
-					],
-					"transformations": [
-						{
-							"name": "FlattenDataArray"
-						},
-						{
-							"name": "CreateColumns"
-						},
-						{
-							"name": "JoinToControlFile"
-						},
-						{
-							"name": "SelectColumns"
-						},
-						{
-							"name": "FilterForNew"
-						},
-						{
-							"name": "UnionToControl"
-						},
-						{
-							"name": "DerivedColumnSimFinID"
-						}
-					],
-					"script": "source(output(\n\t\tcolumns as string[],\n\t\tdata as string[][]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tlimit: 100,\n\tdocumentForm: 'documentPerLine') ~> GetTickers\nsource(output(\n\t\tSimFinID as integer,\n\t\tTicker as string,\n\t\tActive as integer,\n\t\tInitialLoadDateKey as integer,\n\t\tLastUpdateDateKey as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> GetControlFile\nGetTickers foldDown(unroll(data, data),\n\tmapColumn(\n\t\tdata\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenDataArray\nFlattenDataArray derive(SimFinID = data[1],\n\t\tTicker = data[2],\n\t\tActive = 0,\n\t\tInitialLoadDateKey = (toInteger(year(currentDate())) * 10000) + (toInteger(dayOfMonth(currentDate())) * 100) + (toInteger(month(currentDate()))),\n\t\tLastUpdateDateKey = ( (toInteger(year(currentDate())) * 10000) + (toInteger(dayOfMonth(currentDate())) * 100) + (toInteger(month(currentDate()))) ) - 10000) ~> CreateColumns\nCreateColumns, GetControlFile join(toInteger(CreateColumns@SimFinID) == GetControlFile@SimFinID,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> JoinToControlFile\nDerivedColumnSimFinID select(mapColumn(\n\t\tdata,\n\t\tSimFinID = DC_SimFinID,\n\t\tTicker = CreateColumns@Ticker,\n\t\tActive = CreateColumns@Active,\n\t\tInitialLoadDateKey = CreateColumns@InitialLoadDateKey,\n\t\tLastUpdateDateKey = CreateColumns@LastUpdateDateKey,\n\t\tSimFinID = GetControlFile@SimFinID,\n\t\tTicker = GetControlFile@Ticker,\n\t\tActive = GetControlFile@Active,\n\t\tInitialLoadDateKey = GetControlFile@InitialLoadDateKey,\n\t\tLastUpdateDateKey = GetControlFile@LastUpdateDateKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectColumns\nJoinToControlFile filter(isNull(GetControlFile@Ticker)) ~> FilterForNew\nSelectColumns, GetControlFile union(byName: true)~> UnionToControl\nFilterForNew derive(DC_SimFinID = toInteger(CreateColumns@SimFinID)) ~> DerivedColumnSimFinID\nUnionToControl sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['AzureProjectActiveStock.csv'],\n\tmapColumn(\n\t\tSimFinID,\n\t\tTicker,\n\t\tActive,\n\t\tInitialLoadDateKey,\n\t\tLastUpdateDateKey\n\t),\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SinkToControlFile"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/SinkRAW_SimFin')]",
-				"[concat(variables('factoryId'), '/datasets/Source_ControlStockPortolfio')]",
-				"[concat(variables('factoryId'), '/datasets/AzureProjectStockList')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/GetSimFinTickers')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
 					{
-						"name": "Get Tickers List",
-						"type": "Copy",
+						"name": "Get Tiingo API Token",
+						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
@@ -699,148 +446,105 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET"
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings",
-									"copyBehavior": "FlattenHierarchy"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings",
-									"filePattern": "setOfObjects"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"path": "$['columns']"
-										},
-										"sink": {
-											"path": "$['columns']"
-										}
-									},
-									{
-										"source": {
-											"path": "$['data']"
-										},
-										"sink": {
-											"path": "$['data']"
-										}
-									}
-								],
-								"collectionReference": ""
+							"url": "https://kvazureproject.vault.azure.net/Secrets/TiingoAPIKey?api-version=7.1",
+							"method": "GET",
+							"headers": {},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
 							}
-						},
-						"inputs": [
-							{
-								"referenceName": "Source_SimFinAPI",
-								"type": "DatasetReference",
-								"parameters": {
-									"APIKeySimFin": {
-										"value": "@pipeline().parameters.APIKeySimFin",
-										"type": "Expression"
-									},
-									"APIQuery": {
-										"value": "@pipeline().parameters.APIQuery",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "SinkRAW_SimFin",
-								"type": "DatasetReference",
-								"parameters": {
-									"SimFinFileName": {
-										"value": "@pipeline().parameters.SimFinFileName",
-										"type": "Expression"
-									}
-								}
-							}
-						]
+						}
 					},
 					{
-						"name": "DF Tickers to Control",
-						"type": "ExecuteDataFlow",
+						"name": "Set Api Key",
+						"type": "SetVariable",
 						"dependsOn": [
 							{
-								"activity": "Get Tickers List",
+								"activity": "Get Tiingo API Token",
 								"dependencyConditions": [
 									"Succeeded"
 								]
 							}
 						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataflow": {
-								"referenceName": "DFUpdateActiveStocksList",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"GetTickers": {
-										"SimFinFileName": "CompaniesList"
-									},
-									"GetControlFile": {},
-									"SinkToControlFile": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
+							"variableName": "TiingoAPIKey",
+							"value": {
+								"value": "@activity('Get Tiingo API Token').output.Value",
+								"type": "Expression"
+							}
 						}
 					}
 				],
 				"parameters": {
-					"APIKeySimFin": {
-						"type": "string",
-						"defaultValue": "Sl7E4wzP0jWTSvTphg3PwShAwosvVaLj"
+					"TiingoTicker": {
+						"type": "string"
 					},
-					"APIQuery": {
-						"type": "string",
-						"defaultValue": "companies/list"
-					},
-					"SimFinFileName": {
-						"type": "string",
-						"defaultValue": "CompaniesList"
+					"TiingoStartDate": {
+						"type": "string"
 					}
 				},
-				"annotations": [],
-				"lastPublishTime": "2021-02-27T20:12:49Z"
+				"variables": {
+					"TiingoAPIKey": {
+						"type": "String"
+					}
+				},
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Source_SimFinAPI')]",
-				"[concat(variables('factoryId'), '/datasets/SinkRAW_SimFin')]",
-				"[concat(variables('factoryId'), '/dataflows/DFUpdateActiveStocksList')]"
+				"[concat(variables('factoryId'), '/datasets/TiingoAPI')]",
+				"[concat(variables('factoryId'), '/datasets/TiingoDataFile')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OrchestrateEoDPipeline')]",
+			"name": "[concat(parameters('factoryName'), '/Move to BASE')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "TiingoFileRawLocation",
+								"type": "DatasetReference"
+							},
+							"name": "RAWTiingo"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "TiingoEoDPricesBASE",
+								"type": "DatasetReference"
+							},
+							"name": "WriteToBASE"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AddStockNameColumn"
+						},
+						{
+							"name": "RemoveColumns"
+						}
+					],
+					"script": "parameters{\n\tRawFolder as string\n}\nsource(output(\n\t\tcolumns as string[],\n\t\tdata as string[][],\n\t\tdate as string,\n\t\tclose as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tvolume as string,\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as string,\n\t\tdivCash as double,\n\t\tsplitFactor as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tlimit: 100,\n\trowUrlColumn: 'FilePath',\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('RAW/Tiingo/',$RawFolder,'/*'))]) ~> RAWTiingo\nRAWTiingo derive(Ticker = substring( left(FilePath, (length(FilePath)-5)), 22)) ~> AddStockNameColumn\nAddStockNameColumn select(mapColumn(\n\t\tdate,\n\t\tclose,\n\t\thigh,\n\t\tlow,\n\t\topen,\n\t\tvolume,\n\t\tadjClose,\n\t\tadjHigh,\n\t\tadjLow,\n\t\tadjOpen,\n\t\tadjVolume,\n\t\tdivCash,\n\t\tsplitFactor,\n\t\tTicker\n\t),\n\tpartitionBy('key',\n\t\t0,\n\t\tTicker\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RemoveColumns\nRemoveColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat($RawFolder,'_TiingoEodPrices.csv'))],\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> WriteToBASE"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/TiingoFileRawLocation')]",
+				"[concat(variables('factoryId'), '/datasets/TiingoEoDPricesBASE')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/IngestDataPipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Stock Look Up",
+						"name": "Lookup Stock Universe",
 						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
@@ -864,7 +568,7 @@
 								}
 							},
 							"dataset": {
-								"referenceName": "Source_ControlStockPortolfio",
+								"referenceName": "StockUniverse",
 								"type": "DatasetReference",
 								"parameters": {}
 							},
@@ -872,11 +576,11 @@
 						}
 					},
 					{
-						"name": "ForEach - Ticker",
+						"name": "ForEach Active Stock",
 						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "Filter Active Stocks",
+								"activity": "Filter for Active Tickers",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -885,28 +589,32 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Filter Active Stocks').output.value",
+								"value": "@activity('Filter for Active Tickers').output.value",
 								"type": "Expression"
 							},
-							"isSequential": true,
+							"isSequential": false,
+							"batchCount": 5,
 							"activities": [
 								{
-									"name": "EoDDataPipeline",
+									"name": "Execute Pipeline",
 									"type": "ExecutePipeline",
 									"dependsOn": [],
 									"userProperties": [],
 									"typeProperties": {
 										"pipeline": {
-											"referenceName": "EoDDataPipeline",
+											"referenceName": "GetData_Tiingo",
 											"type": "PipelineReference"
 										},
 										"waitOnCompletion": true,
 										"parameters": {
-											"Ticker": {
+											"TiingoTicker": {
 												"value": "@item().Ticker",
 												"type": "Expression"
 											},
-											"StartDate": "@item().LastUpdateDateKey"
+											"TiingoStartDate": {
+												"value": "@formatDateTime(item().LastUpdateDate,'yyyy-MM-dd')",
+												"type": "Expression"
+											}
 										}
 									}
 								}
@@ -914,11 +622,11 @@
 						}
 					},
 					{
-						"name": "Filter Active Stocks",
+						"name": "Filter for Active Tickers",
 						"type": "Filter",
 						"dependsOn": [
 							{
-								"activity": "Stock Look Up",
+								"activity": "Lookup Stock Universe",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -927,38 +635,33 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('Stock Look Up').output.value",
+								"value": "@activity('Lookup Stock Universe').output.value",
 								"type": "Expression"
 							},
 							"condition": {
-								"value": "@equals(item().Active,'1')",
+								"value": "@equals(\nitem().IsActive,\n'1'\n)",
 								"type": "Expression"
 							}
 						}
 					}
 				],
-				"variables": {
-					"Ticker": {
-						"type": "Array"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2021-02-27T19:57:39Z"
+				"concurrency": 5,
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Source_ControlStockPortolfio')]",
-				"[concat(variables('factoryId'), '/pipelines/EoDDataPipeline')]"
+				"[concat(variables('factoryId'), '/datasets/StockUniverse')]",
+				"[concat(variables('factoryId'), '/pipelines/GetData_Tiingo')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/RawToBase')]",
+			"name": "[concat(parameters('factoryName'), '/RawToBasePipeline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Raw To Base",
-						"type": "ExecuteDataFlow",
+						"name": "Get RAW Tiingo Folder List",
+						"type": "GetMetadata",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
@@ -969,23 +672,110 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"dataset": {
+								"referenceName": "TiingoFileRawLocation",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "JsonReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach folder",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get RAW Tiingo Folder List",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get RAW Tiingo Folder List').output.childitems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Get All Folder Names",
+									"type": "AppendVariable",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "LatestRAWTiingoFolders",
+										"value": {
+											"value": "@int(item().name)",
+											"type": "Expression"
+										}
+									}
+								},
+								{
+									"name": "Find Latest Folder",
+									"type": "SetVariable",
+									"dependsOn": [
+										{
+											"activity": "Get All Folder Names",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "LatestRAWTiingoFolder",
+										"value": {
+											"value": "@string(\nmax(variables('LatestRAWTiingoFolders'))\n)",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "DF Raw to Base",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "ForEach folder",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
 							"dataflow": {
-								"referenceName": "DFRawToBase",
+								"referenceName": "Move to BASE",
 								"type": "DataFlowReference",
 								"parameters": {
-									"Ticker": {
-										"value": "'@{pipeline().parameters.Ticker}'",
+									"RawFolder": {
+										"value": "'@{variables('LatestRAWTiingoFolder')}'",
 										"type": "Expression"
 									}
 								},
 								"datasetParameters": {
-									"RawTiingo": {
-										"TiingoTicker": {
-											"value": "@pipeline().parameters.Ticker",
-											"type": "Expression"
-										}
-									},
-									"BASETiingo": {}
+									"RAWTiingo": {},
+									"WriteToBASE": {}
 								}
 							},
 							"staging": {},
@@ -997,21 +787,19 @@
 						}
 					}
 				],
-				"parameters": {
-					"Ticker": {
-						"type": "string"
-					}
-				},
 				"variables": {
-					"FilePath": {
+					"LatestRAWTiingoFolders": {
+						"type": "Array"
+					},
+					"LatestRAWTiingoFolder": {
 						"type": "String"
 					}
 				},
-				"annotations": [],
-				"lastPublishTime": "2021-02-27T19:57:38Z"
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/DFRawToBase')]"
+				"[concat(variables('factoryId'), '/datasets/TiingoFileRawLocation')]",
+				"[concat(variables('factoryId'), '/dataflows/Move to BASE')]"
 			]
 		}
 	]

@@ -6,30 +6,6 @@
 			"type": "string",
 			"metadata": "Data Factory name",
 			"defaultValue": "ADFAZProject2021"
-		},
-		"LinkedService_KeyVault_properties_typeProperties_baseUrl": {
-			"type": "string",
-			"defaultValue": "https://kvazureproject.vault.azure.net/"
-		},
-		"LinkedService_Tiingo_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "https://api.tiingo.com/tiingo/"
-		},
-		"LinkedService_Tiingo_properties_typeProperties_servicePrincipalId": {
-			"type": "string",
-			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
-		},
-		"LinkedService_Tiingo_properties_typeProperties_tenant": {
-			"type": "string",
-			"defaultValue": "75099764-499a-4c9a-be3b-eb20119a46dd"
-		},
-		"LinkedService_Tiingo_properties_typeProperties_aadResourceId": {
-			"type": "string",
-			"defaultValue": "8558216d-445c-49ae-b341-ff8146c6d539"
-		},
-		"azureprojectstorage_properties_typeProperties_connectionString_secretName": {
-			"type": "string",
-			"defaultValue": "AzureStorageConnectionString"
 		}
 	},
 	"variables": {
@@ -123,7 +99,6 @@
 						"typeProperties": {
 							"url": "https://kvazureproject.vault.azure.net/Secrets/TiingoAPIKey?api-version=7.1",
 							"method": "GET",
-							"headers": {},
 							"authentication": {
 								"type": "MSI",
 								"resource": "https://vault.azure.net"
@@ -203,8 +178,7 @@
 							},
 							"dataset": {
 								"referenceName": "StockUniverse",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -308,8 +282,7 @@
 						"typeProperties": {
 							"dataset": {
 								"referenceName": "TiingoFileRawLocation",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"fieldList": [
 								"childItems"
@@ -406,13 +379,8 @@
 										"value": "'@{variables('LatestRAWTiingoFolder')}'",
 										"type": "Expression"
 									}
-								},
-								"datasetParameters": {
-									"RAWTiingo": {},
-									"WriteToBASE": {}
 								}
 							},
-							"staging": {},
 							"compute": {
 								"coreCount": 8,
 								"computeType": "General"
@@ -474,9 +442,7 @@
 					}
 				]
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TiingoAPI')]",
@@ -502,9 +468,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_Tiingo')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TiingoDataFile')]",
@@ -584,9 +548,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
-			]
+			"dependsOn": []
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/TiingoFileRawLocation')]",
@@ -666,72 +628,7 @@
 					}
 				}
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LinkedService_KeyVault')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureKeyVault",
-				"typeProperties": {
-					"baseUrl": "[parameters('LinkedService_KeyVault_properties_typeProperties_baseUrl')]"
-				}
-			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LinkedService_Tiingo')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "RestService",
-				"typeProperties": {
-					"url": "[parameters('LinkedService_Tiingo_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "AadServicePrincipal",
-					"servicePrincipalId": "[parameters('LinkedService_Tiingo_properties_typeProperties_servicePrincipalId')]",
-					"servicePrincipalKey": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LinkedService_KeyVault",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "ServicePrincipleSecret"
-					},
-					"tenant": "[parameters('LinkedService_Tiingo_properties_typeProperties_tenant')]",
-					"aadResourceId": "[parameters('LinkedService_Tiingo_properties_typeProperties_aadResourceId')]"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/azureprojectstorage')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureBlobStorage",
-				"typeProperties": {
-					"connectionString": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LinkedService_KeyVault",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "[parameters('azureprojectstorage_properties_typeProperties_connectionString_secretName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LinkedService_KeyVault')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Move to BASE')]",
@@ -798,9 +695,7 @@
 				},
 				"schema": []
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/azureprojectstorage')]"
-			]
+			"dependsOn": []
 		}
 	]
 }
