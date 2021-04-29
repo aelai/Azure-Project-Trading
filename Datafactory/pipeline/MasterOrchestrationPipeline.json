@@ -1,0 +1,41 @@
+{
+	"name": "MasterOrchestrationPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Ingest Data",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "IngestDataPipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Move from RAW to BASE",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Ingest Data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "RawToBasePipeline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	}
+}
