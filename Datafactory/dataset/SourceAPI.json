@@ -2,8 +2,14 @@
 	"name": "SourceAPI",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LinkedService_Tiingo",
-			"type": "LinkedServiceReference"
+			"referenceName": "LinkedService_SourceAPI",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"APIURL": {
+					"value": "@dataset().APIURL",
+					"type": "Expression"
+				}
+			}
 		},
 		"parameters": {
 			"APIURL": {
@@ -12,12 +18,6 @@
 		},
 		"annotations": [],
 		"type": "RestResource",
-		"typeProperties": {
-			"relativeUrl": {
-				"value": "@dataset().APIURL",
-				"type": "Expression"
-			}
-		},
 		"schema": []
 	}
 }
