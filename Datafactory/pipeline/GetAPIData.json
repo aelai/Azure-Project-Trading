@@ -63,6 +63,10 @@
 							"RAWFolderName": {
 								"value": "@utcnow('yyyyMMdd')",
 								"type": "Expression"
+							},
+							"APIName": {
+								"value": "@pipeline().parameters.APISourceName",
+								"type": "Expression"
 							}
 						}
 					}
