@@ -11,6 +11,13 @@ The aim of this project is to build data pipelines pulling from various financia
   - BASE: Target area for data. Data here is cleansed and transformed if necessary.
   - CONTROL: Holds data used as a part of the orchestration of the pipelines.
 
+## Datafactory
+
+- Ingestion
+  - Use a single pipeline that reads from an API
+  - Will need to set up a dataset for the source and reuse the target dataset
+  - Use KeyVault for connection strings in dataset, API key
+
 # Technology
 
 This propject will be based around using Microsoft Azure resources, in particular:
