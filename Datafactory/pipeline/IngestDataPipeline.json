@@ -60,17 +60,21 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "GetData_Tiingo",
+									"referenceName": "GetAPIData",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
 								"parameters": {
-									"TiingoTicker": {
+									"Ticker": {
 										"value": "@item().Ticker",
 										"type": "Expression"
 									},
-									"TiingoStartDate": {
-										"value": "@formatDateTime(item().LastUpdateDate,'yyyy-MM-dd')",
+									"APIURL": {
+										"value": "@item().URL",
+										"type": "Expression"
+									},
+									"APISourceName": {
+										"value": "@item().Source",
 										"type": "Expression"
 									}
 								}

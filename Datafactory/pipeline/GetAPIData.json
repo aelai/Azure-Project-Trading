@@ -1,9 +1,9 @@
 {
-	"name": "GetData_Tiingo",
+	"name": "GetAPIData",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy Tiingo API Data",
+				"name": "Copy API Data to RAW",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -41,11 +41,11 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "TiingoAPI",
+						"referenceName": "SourceAPI",
 						"type": "DatasetReference",
 						"parameters": {
-							"TiingoTargetDataURL": {
-								"value": "@concat(\n'daily/',\npipeline().parameters.TiingoTicker,\n'/prices?startDate=',\npipeline().parameters.TiingoStartDate,\n'&endDate=',\nutcnow('yyy-MM-dd'),\n'&token=',\nvariables('TiingoAPIKey')\n)",
+							"APIURL": {
+								"value": "@replace(\nreplace(pipeline().parameters.APIURL,\n'<ticker>',\npipeline().parameters.Ticker),\n'<token>',\nvariables('APIKey')\n)",
 								"type": "Expression"
 							}
 						}
@@ -53,15 +53,19 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "TiingoDataFile",
+						"referenceName": "SourceAPIDataFile",
 						"type": "DatasetReference",
 						"parameters": {
-							"TiingoFileName": {
-								"value": "@concat(\npipeline().parameters.TiingoTicker,\n'.json'\n)",
+							"FileName": {
+								"value": "@concat(\npipeline().parameters.Ticker,\n'.json'\n)",
 								"type": "Expression"
 							},
-							"TiingoRAWFolder": {
+							"RAWFolderName": {
 								"value": "@utcnow('yyyyMMdd')",
+								"type": "Expression"
+							},
+							"APIName": {
+								"value": "@pipeline().parameters.APISourceName",
 								"type": "Expression"
 							}
 						}
@@ -69,7 +73,7 @@
 				]
 			},
 			{
-				"name": "Get Tiingo API Token",
+				"name": "Get API Token",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -81,7 +85,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://kvazureproject.vault.azure.net/Secrets/TiingoAPIKey?api-version=7.1",
+					"url": {
+						"value": "@concat(\n'https://kvazureproject.vault.azure.net/Secrets/',\npipeline().parameters.APISourceName\n,'APIKey?api-version=7.1'\n)",
+						"type": "Expression"
+					},
 					"method": "GET",
 					"authentication": {
 						"type": "MSI",
@@ -94,7 +101,7 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Get Tiingo API Token",
+						"activity": "Get API Token",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -102,24 +109,27 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"variableName": "TiingoAPIKey",
+					"variableName": "APIKey",
 					"value": {
-						"value": "@activity('Get Tiingo API Token').output.Value",
+						"value": "@activity('Get API Token').output.Value",
 						"type": "Expression"
 					}
 				}
 			}
 		],
 		"parameters": {
-			"TiingoTicker": {
+			"Ticker": {
 				"type": "string"
 			},
-			"TiingoStartDate": {
+			"APIURL": {
+				"type": "string"
+			},
+			"APISourceName": {
 				"type": "string"
 			}
 		},
 		"variables": {
-			"TiingoAPIKey": {
+			"APIKey": {
 				"type": "String"
 			}
 		},

@@ -1,0 +1,23 @@
+{
+	"name": "SourceAPI",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkedService_SourceAPI",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"APIURL": {
+					"value": "@dataset().APIURL",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"APIURL": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
