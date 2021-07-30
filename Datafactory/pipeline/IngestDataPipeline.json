@@ -65,12 +65,12 @@
 								},
 								"waitOnCompletion": true,
 								"parameters": {
-									"TiingoTicker": {
+									"Ticker": {
 										"value": "@item().Ticker",
 										"type": "Expression"
 									},
-									"TiingoStartDate": {
-										"value": "@formatDateTime(item().LastUpdateDate,'yyyy-MM-dd')",
+									"APIURL": {
+										"value": "@item().URL",
 										"type": "Expression"
 									}
 								}
