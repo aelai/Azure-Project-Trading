@@ -2,6 +2,15 @@
 
 The aim of this project is to build data pipelines pulling from various financial data sources. Sources are likely to be stock trading data and this data will be stored and modelled for analytics.
 
+# Design
+
+## Datalake
+
+- Structure of the storage area will be separated into three areas
+  - RAW: Landing/Staging area for initial dump of stock data from API
+  - BASE: Target area for data. Data here is cleansed and transformed if necessary.
+  - CONTROL: Holds data used as a part of the orchestration of the pipelines.
+
 # Technology
 
 This propject will be based around using Microsoft Azure resources, in particular:
