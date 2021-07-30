@@ -1,9 +1,9 @@
 {
-	"name": "GetData_Tiingo",
+	"name": "GetAPIData",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy Tiingo API Data",
+				"name": "Copy API Data to RAW",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -69,7 +69,7 @@
 				]
 			},
 			{
-				"name": "Get Tiingo API Token",
+				"name": "Get API Token",
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
@@ -81,7 +81,10 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": "https://kvazureproject.vault.azure.net/Secrets/TiingoAPIKey?api-version=7.1",
+					"url": {
+						"value": "@concat(\n'https://kvazureproject.vault.azure.net/Secrets/',\npipeline().parameters.APIName\n,'APIKey?api-version=7.1'\n)",
+						"type": "Expression"
+					},
 					"method": "GET",
 					"authentication": {
 						"type": "MSI",
@@ -94,7 +97,7 @@
 				"type": "SetVariable",
 				"dependsOn": [
 					{
-						"activity": "Get Tiingo API Token",
+						"activity": "Get API Token",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -104,7 +107,7 @@
 				"typeProperties": {
 					"variableName": "APIKey",
 					"value": {
-						"value": "@activity('Get Tiingo API Token').output.Value",
+						"value": "@activity('Get API Token').output.Value",
 						"type": "Expression"
 					}
 				}
@@ -115,6 +118,9 @@
 				"type": "string"
 			},
 			"APIURL": {
+				"type": "string"
+			},
+			"APIName": {
 				"type": "string"
 			}
 		},

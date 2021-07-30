@@ -60,7 +60,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "GetData_Tiingo",
+									"referenceName": "GetAPIData",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
@@ -71,6 +71,10 @@
 									},
 									"APIURL": {
 										"value": "@item().URL",
+										"type": "Expression"
+									},
+									"APIName": {
+										"value": "@item().Source",
 										"type": "Expression"
 									}
 								}
