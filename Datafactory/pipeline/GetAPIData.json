@@ -41,10 +41,10 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "TiingoAPI",
+						"referenceName": "SourceAPI",
 						"type": "DatasetReference",
 						"parameters": {
-							"TiingoTargetDataURL": {
+							"APIURL": {
 								"value": "@replace(\nreplace(pipeline().parameters.APIURL,\n'<ticker>',\npipeline().parameters.Ticker),\n'<token>',\nvariables('APIKey')\n)",
 								"type": "Expression"
 							}
