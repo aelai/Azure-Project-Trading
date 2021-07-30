@@ -73,7 +73,7 @@
 										"value": "@item().URL",
 										"type": "Expression"
 									},
-									"APIName": {
+									"APISourceName": {
 										"value": "@item().Source",
 										"type": "Expression"
 									}

@@ -53,14 +53,14 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "TiingoDataFile",
+						"referenceName": "SourceAPIDataFile",
 						"type": "DatasetReference",
 						"parameters": {
-							"TiingoFileName": {
+							"FileName": {
 								"value": "@concat(\npipeline().parameters.Ticker,\n'.json'\n)",
 								"type": "Expression"
 							},
-							"TiingoRAWFolder": {
+							"RAWFolderName": {
 								"value": "@utcnow('yyyyMMdd')",
 								"type": "Expression"
 							}
@@ -82,7 +82,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"url": {
-						"value": "@concat(\n'https://kvazureproject.vault.azure.net/Secrets/',\npipeline().parameters.APIName\n,'APIKey?api-version=7.1'\n)",
+						"value": "@concat(\n'https://kvazureproject.vault.azure.net/Secrets/',\npipeline().parameters.APISourceName\n,'APIKey?api-version=7.1'\n)",
 						"type": "Expression"
 					},
 					"method": "GET",
@@ -120,7 +120,7 @@
 			"APIURL": {
 				"type": "string"
 			},
-			"APIName": {
+			"APISourceName": {
 				"type": "string"
 			}
 		},

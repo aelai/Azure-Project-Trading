@@ -1,15 +1,18 @@
 {
-	"name": "TiingoDataFile",
+	"name": "SourceAPIDataFile",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "azureprojectstorage",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"TiingoFileName": {
+			"FileName": {
 				"type": "string"
 			},
-			"TiingoRAWFolder": {
+			"RAWFolderName": {
+				"type": "string"
+			},
+			"APIName": {
 				"type": "string"
 			}
 		},
@@ -19,11 +22,11 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": {
-					"value": "@dataset().TiingoFileName",
+					"value": "@dataset().FileName",
 					"type": "Expression"
 				},
 				"folderPath": {
-					"value": "@concat(\n'RAW/Tiingo/',\ndataset().TiingoRAWFolder\n)",
+					"value": "@concat(\n'RAW/',\ndataset().APIName\n,'/',\ndataset().RAWFolderName\n)",
 					"type": "Expression"
 				},
 				"container": "datalake"
