@@ -6,13 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
-			"FileName": {
-				"type": "string"
-			},
-			"RAWFolderName": {
-				"type": "string"
-			},
-			"APIName": {
+			"FilePath": {
 				"type": "string"
 			}
 		},
@@ -21,12 +15,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": {
-					"value": "@dataset().FileName",
-					"type": "Expression"
-				},
 				"folderPath": {
-					"value": "@concat(\n'RAW/',\ndataset().APIName\n,'/',\ndataset().RAWFolderName\n)",
+					"value": "@dataset().FilePath",
 					"type": "Expression"
 				},
 				"container": "datalake"
