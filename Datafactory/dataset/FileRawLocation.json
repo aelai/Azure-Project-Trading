@@ -5,12 +5,6 @@
 			"referenceName": "azureprojectstorage",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"APISourceName": {
-				"type": "string",
-				"defaultValue": "Tiingo"
-			}
-		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
