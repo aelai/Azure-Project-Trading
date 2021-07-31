@@ -16,7 +16,7 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"folderPath": {
-					"value": "@concat(\n'RAW/',\ndataset().APISourceName\n)",
+					"value": "@concat('RAW/',dataset().APISourceName)",
 					"type": "Expression"
 				},
 				"container": "datalake"
