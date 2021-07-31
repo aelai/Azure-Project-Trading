@@ -57,7 +57,11 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"FilePath": {
-								"value": "@concat(\nutcnow('yyyyMMdd'),\npipeline().parameters.Ticker,\n'.json'\n)",
+								"value": "@concat(\n'RAW/StockPrices/EoD/',\nutcnow('yyyyMMdd'),\n'/'\n)",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@concat(\npipeline().parameters.Ticker,\n'.json'\n)",
 								"type": "Expression"
 							}
 						}
