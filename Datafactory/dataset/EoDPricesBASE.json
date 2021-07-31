@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": "BASE/StockPrices/Eod",
+				"folderPath": "BASE/StockPrices/EoD",
 				"container": "datalake"
 			},
 			"columnDelimiter": ",",
