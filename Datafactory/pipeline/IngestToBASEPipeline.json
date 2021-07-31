@@ -117,10 +117,6 @@
 							"RawFolder": {
 								"value": "'@{variables('strLatestFolder')}'",
 								"type": "Expression"
-							},
-							"APISourceName": {
-								"value": "'@{item().value}'",
-								"type": "Expression"
 							}
 						}
 					},
