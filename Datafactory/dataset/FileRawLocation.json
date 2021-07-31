@@ -16,10 +16,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": {
-					"value": "@concat('RAW/',dataset().APISourceName)",
-					"type": "Expression"
-				},
 				"container": "datalake"
 			}
 		},
