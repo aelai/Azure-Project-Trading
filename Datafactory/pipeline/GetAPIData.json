@@ -56,16 +56,8 @@
 						"referenceName": "SourceAPIDataFile",
 						"type": "DatasetReference",
 						"parameters": {
-							"FileName": {
-								"value": "@concat(\npipeline().parameters.Ticker,\n'.json'\n)",
-								"type": "Expression"
-							},
-							"RAWFolderName": {
-								"value": "@utcnow('yyyyMMdd')",
-								"type": "Expression"
-							},
-							"APIName": {
-								"value": "@pipeline().parameters.APISourceName",
+							"FilePath": {
+								"value": "@concat(\npipeline().parameters.APISourceName,\nutcnow('yyyyMMdd'),\npipeline().parameters.Ticker,\n'.json'\n)",
 								"type": "Expression"
 							}
 						}
