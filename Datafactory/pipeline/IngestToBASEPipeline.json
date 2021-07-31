@@ -67,11 +67,11 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataset": {
-									"referenceName": "FileRawLocation",
+									"referenceName": "SourceAPIDataFile",
 									"type": "DatasetReference",
 									"parameters": {
-										"APISourceName": {
-											"value": "@item()",
+										"FilePath": {
+											"value": "@concat('RAW/',\nitem()\n)",
 											"type": "Expression"
 										}
 									}
@@ -172,16 +172,8 @@
 											"type": "Expression"
 										},
 										"APISourceName": {
-											"value": "'@{item()}'",
+											"value": "'@{item().value}'",
 											"type": "Expression"
-										}
-									},
-									"datasetParameters": {
-										"RAWInputFile": {
-											"APISourceName": {
-												"value": "@item()",
-												"type": "Expression"
-											}
 										}
 									}
 								},

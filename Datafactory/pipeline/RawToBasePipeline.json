@@ -15,10 +15,6 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataset": {
-						"referenceName": "TiingoFileRawLocation",
-						"type": "DatasetReference"
-					},
 					"fieldList": [
 						"childItems"
 					],
