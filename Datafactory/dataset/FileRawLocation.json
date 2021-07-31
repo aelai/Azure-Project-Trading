@@ -7,7 +7,8 @@
 		},
 		"parameters": {
 			"APISourceName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "Tiingo"
 			}
 		},
 		"annotations": [],
