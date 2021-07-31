@@ -71,7 +71,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"FilePath": {
-											"value": "@concat('RAW/',\nitem()\n)",
+											"value": "@concat('RAW/',\nitem().value,\n'/'\n)",
 											"type": "Expression"
 										}
 									}
