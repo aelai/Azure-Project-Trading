@@ -34,11 +34,11 @@
 				}
 			},
 			{
-				"name": "ForEach Active Stock",
+				"name": "ForEach Active Source",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Filter for Active Tickers",
+						"activity": "Filter for Active API Source",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,14 +47,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Filter for Active Tickers').output.value",
+						"value": "@activity('Filter for Active API Source').output.value",
 						"type": "Expression"
 					},
 					"isSequential": false,
 					"batchCount": 5,
 					"activities": [
 						{
-							"name": "Get RAW Tiingo Folder List",
+							"name": "Get a List of Folders",
 							"type": "GetMetadata",
 							"dependsOn": [],
 							"policy": {
@@ -67,8 +67,14 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataset": {
-									"referenceName": "TiingoFileRawLocation",
-									"type": "DatasetReference"
+									"referenceName": "FileRawLocation",
+									"type": "DatasetReference",
+									"parameters": {
+										"APISourceName": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
 								},
 								"fieldList": [
 									"childItems"
@@ -88,7 +94,7 @@
 							"type": "ForEach",
 							"dependsOn": [
 								{
-									"activity": "Get RAW Tiingo Folder List",
+									"activity": "Get a List of Folders",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -97,7 +103,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"items": {
-									"value": "@activity('Get RAW Tiingo Folder List').output.childitems",
+									"value": "@activity('Get a List of Folders').output.childitems",
 									"type": "Expression"
 								},
 								"activities": [
@@ -178,7 +184,7 @@
 				}
 			},
 			{
-				"name": "Filter for Active Tickers",
+				"name": "Filter for Active API Source",
 				"type": "Filter",
 				"dependsOn": [
 					{
@@ -191,7 +197,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Lookup Stock Universe').output.value",
+						"value": "@activity('Lookup Stock Universe').output.Source",
 						"type": "Expression"
 					},
 					"condition": {
