@@ -6,7 +6,7 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "SourceAPIDataFile",
+						"referenceName": "FileRawLocation",
 						"type": "DatasetReference"
 					},
 					"name": "RAWInputFile"
@@ -29,7 +29,7 @@
 					"name": "RemoveColumns"
 				}
 			],
-			"script": "parameters{\n\tRawFolder as string,\n\tAPISourceName as string\n}\nsource(output(\n\t\tdate as string,\n\t\tclose as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tvolume as string,\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as string,\n\t\tdivCash as double,\n\t\tsplitFactor as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'FilePath',\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('RAW/',$APISourceName,'/',$RawFolder,'/*'))]) ~> RAWInputFile\nRAWInputFile derive(Ticker = substring( left(FilePath, (length(FilePath)-5)), 22)) ~> AddStockNameColumn\nAddStockNameColumn select(mapColumn(\n\t\tdate,\n\t\tclose,\n\t\thigh,\n\t\tlow,\n\t\topen,\n\t\tvolume,\n\t\tadjClose,\n\t\tadjHigh,\n\t\tadjLow,\n\t\tadjOpen,\n\t\tadjVolume,\n\t\tdivCash,\n\t\tsplitFactor,\n\t\tTicker\n\t),\n\tpartitionBy('key',\n\t\t0,\n\t\tTicker\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RemoveColumns\nRemoveColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat($RawFolder,'_',$APISourceName,'EodPrices.csv'))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> WriteToBASE"
+			"script": "parameters{\n\tRawFolder as string,\n\tAPISourceName as string\n}\nsource(output(\n\t\tcolumns as string[],\n\t\tdata as string[][],\n\t\tdate as string,\n\t\tclose as double,\n\t\thigh as double,\n\t\tlow as double,\n\t\topen as double,\n\t\tvolume as string,\n\t\tadjClose as double,\n\t\tadjHigh as double,\n\t\tadjLow as double,\n\t\tadjOpen as double,\n\t\tadjVolume as string,\n\t\tdivCash as double,\n\t\tsplitFactor as double\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'FilePath',\n\tdocumentForm: 'documentPerLine',\n\twildcardPaths:[(concat('RAW/',$APISourceName,'/',$RawFolder,'/*'))]) ~> RAWInputFile\nRAWInputFile derive(Ticker = substring( left(FilePath, (length(FilePath)-5)), 22)) ~> AddStockNameColumn\nAddStockNameColumn select(mapColumn(\n\t\tdate,\n\t\tclose,\n\t\thigh,\n\t\tlow,\n\t\topen,\n\t\tvolume,\n\t\tadjClose,\n\t\tadjHigh,\n\t\tadjLow,\n\t\tadjOpen,\n\t\tadjVolume,\n\t\tdivCash,\n\t\tsplitFactor,\n\t\tTicker\n\t),\n\tpartitionBy('key',\n\t\t0,\n\t\tTicker\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> RemoveColumns\nRemoveColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:[(concat($RawFolder,'_',$APISourceName,'EodPrices.csv'))],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> WriteToBASE"
 		}
 	}
 }
