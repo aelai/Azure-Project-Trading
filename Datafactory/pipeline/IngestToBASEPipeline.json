@@ -168,8 +168,20 @@
 									"type": "DataFlowReference",
 									"parameters": {
 										"RawFolder": {
-											"value": "'@{variables('LatestRAWTiingoFolder')}'",
+											"value": "'@{variables('strLatestFolder')}'",
 											"type": "Expression"
+										},
+										"APISourceName": {
+											"value": "'@{item()}'",
+											"type": "Expression"
+										}
+									},
+									"datasetParameters": {
+										"RAWInputFile": {
+											"APISourceName": {
+												"value": "@item()",
+												"type": "Expression"
+											}
 										}
 									}
 								},
