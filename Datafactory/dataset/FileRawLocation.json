@@ -16,10 +16,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": {
-					"value": "@concat('RAW/',dataset().APISourceName)",
-					"type": "Expression"
-				},
+				"folderPath": "RAW/Tiingo",
 				"container": "datalake"
 			}
 		},
