@@ -113,7 +113,7 @@
 										"dependsOn": [],
 										"userProperties": [],
 										"typeProperties": {
-											"variableName": "LatestRAWTiingoFolders",
+											"variableName": "arrayListOfFolders",
 											"value": {
 												"value": "@int(item().name)",
 												"type": "Expression"
@@ -133,9 +133,9 @@
 										],
 										"userProperties": [],
 										"typeProperties": {
-											"variableName": "LatestRAWTiingoFolder",
+											"variableName": "strLatestFolder",
 											"value": {
-												"value": "@string(\nmax(variables('LatestRAWTiingoFolders'))\n)",
+												"value": "@string(\nmax(variables('arrayListOfFolders'))\n)",
 												"type": "Expression"
 											}
 										}
@@ -208,6 +208,14 @@
 			}
 		],
 		"concurrency": 5,
+		"variables": {
+			"arrayListOfFolders": {
+				"type": "Array"
+			},
+			"strLatestFolder": {
+				"type": "String"
+			}
+		},
 		"annotations": []
 	}
 }
