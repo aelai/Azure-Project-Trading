@@ -1,0 +1,207 @@
+{
+	"name": "IngestToBASEPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup Stock Universe",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "StockUniverse",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach Active Stock",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter for Active Tickers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter for Active Tickers').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 5,
+					"activities": [
+						{
+							"name": "Get RAW Tiingo Folder List",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "TiingoFileRawLocation",
+									"type": "DatasetReference"
+								},
+								"fieldList": [
+									"childItems"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							}
+						},
+						{
+							"name": "ForEach folder",
+							"type": "ForEach",
+							"dependsOn": [
+								{
+									"activity": "Get RAW Tiingo Folder List",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"userProperties": [],
+							"typeProperties": {
+								"items": {
+									"value": "@activity('Get RAW Tiingo Folder List').output.childitems",
+									"type": "Expression"
+								},
+								"activities": [
+									{
+										"name": "Get All Folder Names",
+										"type": "AppendVariable",
+										"dependsOn": [],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "LatestRAWTiingoFolders",
+											"value": {
+												"value": "@int(item().name)",
+												"type": "Expression"
+											}
+										}
+									},
+									{
+										"name": "Find Latest Folder",
+										"type": "SetVariable",
+										"dependsOn": [
+											{
+												"activity": "Get All Folder Names",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
+										"userProperties": [],
+										"typeProperties": {
+											"variableName": "LatestRAWTiingoFolder",
+											"value": {
+												"value": "@string(\nmax(variables('LatestRAWTiingoFolders'))\n)",
+												"type": "Expression"
+											}
+										}
+									}
+								]
+							}
+						},
+						{
+							"name": "DF Raw to Base",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "ForEach folder",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "1.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "Move to BASE",
+									"type": "DataFlowReference",
+									"parameters": {
+										"RawFolder": {
+											"value": "'@{variables('LatestRAWTiingoFolder')}'",
+											"type": "Expression"
+										}
+									}
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Filter for Active Tickers",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Lookup Stock Universe",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup Stock Universe').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(\nitem().IsActive,\n'1'\n)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"concurrency": 5,
+		"annotations": []
+	}
+}
