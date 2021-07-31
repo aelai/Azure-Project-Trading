@@ -57,7 +57,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"FilePath": {
-								"value": "@concat(\npipeline().parameters.APISourceName,\nutcnow('yyyyMMdd'),\npipeline().parameters.Ticker,\n'.json'\n)",
+								"value": "@concat(\nutcnow('yyyyMMdd'),\npipeline().parameters.Ticker,\n'.json'\n)",
 								"type": "Expression"
 							}
 						}
