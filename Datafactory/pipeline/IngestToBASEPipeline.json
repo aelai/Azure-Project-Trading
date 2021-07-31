@@ -3,8 +3,8 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Lookup Stock Universe",
-				"type": "Lookup",
+				"name": "Get a List of Folders",
+				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
@@ -15,30 +15,33 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "DelimitedTextSource",
-						"storeSettings": {
-							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
-							"enablePartitionDiscovery": false
-						},
-						"formatSettings": {
-							"type": "DelimitedTextReadSettings"
+					"dataset": {
+						"referenceName": "SourceAPIDataFile",
+						"type": "DatasetReference",
+						"parameters": {
+							"FilePath": "RAW/StockPrices/EoD",
+							"FileName": " "
 						}
 					},
-					"dataset": {
-						"referenceName": "StockUniverse",
-						"type": "DatasetReference"
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
 					},
-					"firstRowOnly": false
+					"formatSettings": {
+						"type": "JsonReadSettings"
+					}
 				}
 			},
 			{
-				"name": "ForEach Active Source",
+				"name": "ForEach folder",
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Filter for Active API Source",
+						"activity": "Get a List of Folders",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -47,167 +50,85 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Filter for Active API Source').output.value",
+						"value": "@activity('Get a List of Folders').output.childitems",
 						"type": "Expression"
 					},
-					"isSequential": false,
-					"batchCount": 5,
 					"activities": [
 						{
-							"name": "Get a List of Folders",
-							"type": "GetMetadata",
+							"name": "Get All Folder Names",
+							"type": "AppendVariable",
 							"dependsOn": [],
-							"policy": {
-								"timeout": "7.00:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
 							"userProperties": [],
 							"typeProperties": {
-								"dataset": {
-									"referenceName": "SourceAPIDataFile",
-									"type": "DatasetReference",
-									"parameters": {
-										"FilePath": {
-											"value": "@concat('RAW/',\nitem().value,\n'/'\n)",
-											"type": "Expression"
-										}
-									}
-								},
-								"fieldList": [
-									"childItems"
-								],
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							}
-						},
-						{
-							"name": "ForEach folder",
-							"type": "ForEach",
-							"dependsOn": [
-								{
-									"activity": "Get a List of Folders",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
-							"userProperties": [],
-							"typeProperties": {
-								"items": {
-									"value": "@activity('Get a List of Folders').output.childitems",
+								"variableName": "arrayListOfFolders",
+								"value": {
+									"value": "@int(item().name)",
 									"type": "Expression"
-								},
-								"activities": [
-									{
-										"name": "Get All Folder Names",
-										"type": "AppendVariable",
-										"dependsOn": [],
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "arrayListOfFolders",
-											"value": {
-												"value": "@int(item().name)",
-												"type": "Expression"
-											}
-										}
-									},
-									{
-										"name": "Find Latest Folder",
-										"type": "SetVariable",
-										"dependsOn": [
-											{
-												"activity": "Get All Folder Names",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
-										"userProperties": [],
-										"typeProperties": {
-											"variableName": "strLatestFolder",
-											"value": {
-												"value": "@string(\nmax(variables('arrayListOfFolders'))\n)",
-												"type": "Expression"
-											}
-										}
-									}
-								]
+								}
 							}
 						},
 						{
-							"name": "DF Raw to Base",
-							"type": "ExecuteDataFlow",
+							"name": "Find Latest Folder",
+							"type": "SetVariable",
 							"dependsOn": [
 								{
-									"activity": "ForEach folder",
+									"activity": "Get All Folder Names",
 									"dependencyConditions": [
 										"Succeeded"
 									]
 								}
 							],
-							"policy": {
-								"timeout": "1.00:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
 							"userProperties": [],
 							"typeProperties": {
-								"dataflow": {
-									"referenceName": "Move to BASE",
-									"type": "DataFlowReference",
-									"parameters": {
-										"RawFolder": {
-											"value": "'@{variables('strLatestFolder')}'",
-											"type": "Expression"
-										},
-										"APISourceName": {
-											"value": "'@{item().value}'",
-											"type": "Expression"
-										}
-									}
-								},
-								"compute": {
-									"coreCount": 8,
-									"computeType": "General"
-								},
-								"traceLevel": "Fine"
+								"variableName": "strLatestFolder",
+								"value": {
+									"value": "@string(\nmax(variables('arrayListOfFolders'))\n)",
+									"type": "Expression"
+								}
 							}
 						}
 					]
 				}
 			},
 			{
-				"name": "Filter for Active API Source",
-				"type": "Filter",
+				"name": "DF Raw to Base",
+				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Lookup Stock Universe",
+						"activity": "ForEach folder",
 						"dependencyConditions": [
 							"Succeeded"
 						]
 					}
 				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
 				"userProperties": [],
 				"typeProperties": {
-					"items": {
-						"value": "@activity('Lookup Stock Universe').output.Source",
-						"type": "Expression"
+					"dataflow": {
+						"referenceName": "Move to BASE",
+						"type": "DataFlowReference",
+						"parameters": {
+							"RawFolder": {
+								"value": "'@{variables('strLatestFolder')}'",
+								"type": "Expression"
+							},
+							"APISourceName": {
+								"value": "'@{item().value}'",
+								"type": "Expression"
+							}
+						}
 					},
-					"condition": {
-						"value": "@equals(\nitem().IsActive,\n'1'\n)",
-						"type": "Expression"
-					}
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
 				}
 			}
 		],
