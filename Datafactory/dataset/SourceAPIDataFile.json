@@ -6,13 +6,10 @@
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
+			"FilePath": {
+				"type": "string"
+			},
 			"FileName": {
-				"type": "string"
-			},
-			"RAWFolderName": {
-				"type": "string"
-			},
-			"APIName": {
 				"type": "string"
 			}
 		},
@@ -26,7 +23,7 @@
 					"type": "Expression"
 				},
 				"folderPath": {
-					"value": "@concat(\n'RAW/',\ndataset().APIName\n,'/',\ndataset().RAWFolderName\n)",
+					"value": "@dataset().FilePath",
 					"type": "Expression"
 				},
 				"container": "datalake"

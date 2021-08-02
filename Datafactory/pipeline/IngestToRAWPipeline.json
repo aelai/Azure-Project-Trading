@@ -1,5 +1,5 @@
 {
-	"name": "IngestDataPipeline",
+	"name": "IngestToRAWPipeline",
 	"properties": {
 		"activities": [
 			{

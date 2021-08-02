@@ -1,9 +1,9 @@
 {
-	"name": "RawToBasePipeline",
+	"name": "IngestToBASEPipeline",
 	"properties": {
 		"activities": [
 			{
-				"name": "Get RAW Tiingo Folder List",
+				"name": "Get a List of Folders",
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
@@ -16,8 +16,12 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "TiingoFileRawLocation",
-						"type": "DatasetReference"
+						"referenceName": "SourceAPIDataFile",
+						"type": "DatasetReference",
+						"parameters": {
+							"FilePath": "RAW/StockPrices/EoD",
+							"FileName": " "
+						}
 					},
 					"fieldList": [
 						"childItems"
@@ -37,7 +41,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get RAW Tiingo Folder List",
+						"activity": "Get a List of Folders",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -46,7 +50,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get RAW Tiingo Folder List').output.childitems",
+						"value": "@activity('Get a List of Folders').output.childitems",
 						"type": "Expression"
 					},
 					"activities": [
@@ -56,7 +60,7 @@
 							"dependsOn": [],
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "LatestRAWTiingoFolders",
+								"variableName": "arrayListOfFolders",
 								"value": {
 									"value": "@int(item().name)",
 									"type": "Expression"
@@ -76,9 +80,9 @@
 							],
 							"userProperties": [],
 							"typeProperties": {
-								"variableName": "LatestRAWTiingoFolder",
+								"variableName": "strLatestFolder",
 								"value": {
-									"value": "@string(\nmax(variables('LatestRAWTiingoFolders'))\n)",
+									"value": "@string(\nmax(variables('arrayListOfFolders'))\n)",
 									"type": "Expression"
 								}
 							}
@@ -98,7 +102,7 @@
 					}
 				],
 				"policy": {
-					"timeout": "7.00:00:00",
+					"timeout": "1.00:00:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -111,7 +115,7 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"RawFolder": {
-								"value": "'@{variables('LatestRAWTiingoFolder')}'",
+								"value": "'@{variables('strLatestFolder')}'",
 								"type": "Expression"
 							}
 						}
@@ -124,11 +128,12 @@
 				}
 			}
 		],
+		"concurrency": 5,
 		"variables": {
-			"LatestRAWTiingoFolders": {
+			"arrayListOfFolders": {
 				"type": "Array"
 			},
-			"LatestRAWTiingoFolder": {
+			"strLatestFolder": {
 				"type": "String"
 			}
 		},

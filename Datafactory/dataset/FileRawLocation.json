@@ -1,5 +1,5 @@
 {
-	"name": "TiingoFileRawLocation",
+	"name": "FileRawLocation",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "azureprojectstorage",
@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"folderPath": "RAW/Tiingo",
+				"folderPath": "RAW",
 				"container": "datalake"
 			}
 		},

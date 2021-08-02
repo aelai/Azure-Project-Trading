@@ -45,7 +45,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"APIURL": {
-								"value": "@replace(\nreplace(pipeline().parameters.APIURL,\n'<ticker>',\npipeline().parameters.Ticker),\n'<token>',\nvariables('APIKey')\n)",
+								"value": "@replace(\nreplace(\nreplace(pipeline().parameters.APIURL,\n'<ticker>',\npipeline().parameters.Ticker),\n'<token>',\nvariables('APIKey')\n),\n'<EndDate>',\n utcnow('yyyy-MM-dd')\n)",
 								"type": "Expression"
 							}
 						}
@@ -56,16 +56,12 @@
 						"referenceName": "SourceAPIDataFile",
 						"type": "DatasetReference",
 						"parameters": {
+							"FilePath": {
+								"value": "@concat(\n'RAW/StockPrices/EoD/',\nutcnow('yyyyMMdd'),\n'/'\n)",
+								"type": "Expression"
+							},
 							"FileName": {
 								"value": "@concat(\npipeline().parameters.Ticker,\n'.json'\n)",
-								"type": "Expression"
-							},
-							"RAWFolderName": {
-								"value": "@utcnow('yyyyMMdd')",
-								"type": "Expression"
-							},
-							"APIName": {
-								"value": "@pipeline().parameters.APISourceName",
 								"type": "Expression"
 							}
 						}
