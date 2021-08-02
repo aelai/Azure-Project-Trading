@@ -21,7 +21,8 @@ The aim of this project is to build data pipelines pulling from various financia
 ## Azure Databricks
 
 - Transformations
-- Use secret scopes backed by Key Vault
+  - Databricks will be used for all transformations of the stock data.
+- Use secret scopes backed by Key Vault to access ADLS
   - Scope created here: <https://<databricks-instance>#secrets/createScope>
   - Service Principle secret stored in key Vault
 
