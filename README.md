@@ -18,6 +18,13 @@ The aim of this project is to build data pipelines pulling from various financia
   - Will need to set up a dataset for the source and reuse the target dataset
   - Use KeyVault for connection strings in dataset, API key
 
+## Azure Databricks
+
+- Transformations
+- Use secret scopes backed by Key Vault
+  - Scope created here: <https://<databricks-instance>#secrets/createScope>
+  - Service Principle secret stored in key Vault
+
 # Technology
 
 This propject will be based around using Microsoft Azure resources, in particular:
