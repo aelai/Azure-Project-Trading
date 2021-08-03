@@ -25,6 +25,8 @@ The aim of this project is to build data pipelines pulling from various financia
 - Use secret scopes backed by Key Vault to access ADLS
   - Scope created here: <https://<databricks-instance>#secrets/createScope>
   - Service Principle secret stored in key Vault
+- Project will be using VS Code and the Databricks extension <- Need to confirm this set up....
+  - Reference to Databricks connect <https://docs.databricks.com/dev-tools/databricks-connect.html>
 
 # Technology
 
