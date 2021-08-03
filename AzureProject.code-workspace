@@ -4,5 +4,8 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"python.pythonPath": "/Users/alexanderlai/.msvscode.hdinsight/hdinsightJupyter/bin/python",
+		"jupyter.jupyterLaunchTimeout": 240000
+	}
 }
