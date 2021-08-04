@@ -1,7 +1,7 @@
 # Databricks notebook source
 # import libraries
 
-from pyspark.sql.functions import substring, concat, col, lit
+from pyspark.sql.functions import substring, concat, col, lit, countDistinct, round
 import pandas as pd
 import numpy as np
 
@@ -13,11 +13,6 @@ storage_account_name = "adlsazureproject2020"
 
 file_location = "wasbs://datalake@adlsazureproject2020.blob.core.windows.net/BASE/StockPrices/EoD/20210731_EoDPrices.csv"
 file_type = "csv"
-
-# COMMAND ----------
-
-
-
 
 # COMMAND ----------
 
@@ -38,10 +33,12 @@ dfEodPrices = spark.read.format(file_type).option("inferSchema", "true").option(
 
 # COMMAND ----------
 
-# Create extra columns
+# Create ID column
 
-dfEodPrices = dfEodPrices.withColumn("ID", concat(substring('date', 6, 2),substring('date', 1, 4) ) ) #\
-                          #.withColumn("DailyReturn", dfEodPrices['close'].pct_change(1))
+dfEodPrices = dfEodPrices.withColumn("ID", concat(substring('date', 6, 2),substring('date', 1, 4) ) ) 
+
+# Get distinct count of tickers
+CountOfStocks = dfEodPrices.select(countDistinct("Ticker")).collect()[0][0]
 
 #display(dfEodPrices)
 
@@ -56,6 +53,8 @@ dfEodPrices_pd["DailyReturn"] = dfEodPrices_pd.groupby("Ticker")["close"].pct_ch
 # Create Natural Log of daily returns
 dfEodPrices_pd["LNDailyReturn"] = np.log(1 + dfEodPrices_pd["DailyReturn"])
 
+# Create portfolio weights column
+dfEodPrices_pd["Weight"] = 1/CountOfStocks
 
 
 # COMMAND ----------
@@ -63,6 +62,15 @@ dfEodPrices_pd["LNDailyReturn"] = np.log(1 + dfEodPrices_pd["DailyReturn"])
 print(dfEodPrices_pd)
 
 # will need to convert pandas df back to spark df. faster
+
+# COMMAND ----------
+
+# pivot dataframe
+
+
+#dfEodPrices_pd.groupBy().pivot("Ticker").agg(first("DailyReturn")).show()
+
+dfEodPrices_pd.transpose()
 
 # COMMAND ----------
 
