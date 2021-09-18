@@ -1,0 +1,10 @@
+{
+	"name": "KeyVaultGeneralUse",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kvGeneralUse.vault.azure.net/"
+		}
+	}
+}
