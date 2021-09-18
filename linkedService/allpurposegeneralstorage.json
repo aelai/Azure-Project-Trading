@@ -4,14 +4,18 @@
 		"annotations": [],
 		"type": "AzureBlobStorage",
 		"typeProperties": {
-			"connectionString": {
+			"serviceEndpoint": "https://allpurposegeneralstorage.blob.core.windows.net",
+			"tenant": "75099764-499a-4c9a-be3b-eb20119a46dd",
+			"servicePrincipalId": "644aa91d-3d52-4aaf-909f-95b95ca9622f",
+			"servicePrincipalKey": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
 					"referenceName": "KeyVaultGeneralUse",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "keyallpurposegeneralstorage"
-			}
+				"secretName": "valuegeneralpurposeserviceprinciple"
+			},
+			"accountKind": "StorageV2"
 		}
 	}
 }
