@@ -1,0 +1,17 @@
+{
+	"name": "allpurposegeneralstorage",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"connectionString": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "KeyVaultGeneralUse",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "keyallpurposegeneralstorage"
+			}
+		}
+	}
+}
