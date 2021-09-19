@@ -1,0 +1,33 @@
+{
+	"name": "StockUniverse",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "allpurposegeneralstorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "StockUniverse.csv",
+				"folderPath": "Control",
+				"container": "trading"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "StockCode",
+				"type": "String"
+			},
+			{
+				"name": "IsActive",
+				"type": "String"
+			}
+		]
+	}
+}
