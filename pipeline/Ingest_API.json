@@ -28,14 +28,18 @@
 					},
 					"dataset": {
 						"referenceName": "StockUniverse",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"folder": "Control",
+							"file": "StockUniverse.csv"
+						}
 					},
 					"firstRowOnly": false
 				}
 			},
 			{
-				"name": "Filter for Active Stocks Only",
-				"type": "Filter",
+				"name": "ForEach Stock",
+				"type": "ForEach",
 				"dependsOn": [
 					{
 						"activity": "Get Stock List",
@@ -47,13 +51,92 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Stock List').output",
+						"value": "@activity('Get Stock List').output.value",
 						"type": "Expression"
 					},
-					"condition": {
-						"value": "@activity('Get Stock List').output.StockCode = \"1\"",
-						"type": "Expression"
-					}
+					"activities": [
+						{
+							"name": "Filter for Active Stocks",
+							"type": "Filter",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"items": {
+									"value": "@activity('Get Stock List').output.value",
+									"type": "Expression"
+								},
+								"condition": {
+									"value": "@equals(item().IsActive,'1')",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Download from API",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Filter for Active Stocks",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Tiingo",
+									"type": "DatasetReference",
+									"parameters": {
+										"APIAddress": {
+											"value": "@concat('\nhttps://api.tiingo.com/tiingo/daily/',\nitem().StockCode,\n'/prices?startDate=2000-01-01&token=ad7a3439179844131f3a468e9c90d23dec925ac3\n')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "StockUniverse",
+									"type": "DatasetReference",
+									"parameters": {
+										"folder": "Base/StockPrices",
+										"file": {
+											"value": "@concat(\nitem().Stockcode,\n'.csv'\n)",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
 				}
 			}
 		],

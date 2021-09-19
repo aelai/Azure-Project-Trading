@@ -1,0 +1,23 @@
+{
+	"name": "Tiingo",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "API",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"webaddress": {
+					"value": "@dataset().APIAddress",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"APIAddress": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
