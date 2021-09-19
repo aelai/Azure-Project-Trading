@@ -42,7 +42,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get Stock List",
+						"activity": "Filter for Active Stock",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -51,37 +51,14 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Stock List').output.value",
+						"value": "@activity('Filter for Active Stock').output.value",
 						"type": "Expression"
 					},
 					"activities": [
 						{
-							"name": "Filter for Active Stocks",
-							"type": "Filter",
-							"dependsOn": [],
-							"userProperties": [],
-							"typeProperties": {
-								"items": {
-									"value": "@activity('Get Stock List').output.value",
-									"type": "Expression"
-								},
-								"condition": {
-									"value": "@equals(item().IsActive,'1')",
-									"type": "Expression"
-								}
-							}
-						},
-						{
 							"name": "Download from API",
 							"type": "Copy",
-							"dependsOn": [
-								{
-									"activity": "Filter for Active Stocks",
-									"dependencyConditions": [
-										"Succeeded"
-									]
-								}
-							],
+							"dependsOn": [],
 							"policy": {
 								"timeout": "7.00:00:00",
 								"retry": 0,
@@ -137,6 +114,29 @@
 							]
 						}
 					]
+				}
+			},
+			{
+				"name": "Filter for Active Stock",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get Stock List",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Stock List').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(\nitem().IsActive,\n'1'\n)",
+						"type": "Expression"
+					}
 				}
 			}
 		],
