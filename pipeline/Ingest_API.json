@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Stocks",
+				"name": "Get Stock List",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -29,6 +29,30 @@
 					"dataset": {
 						"referenceName": "StockUniverse",
 						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Filter for Active Stocks Only",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get Stock List",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Stock List').output",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@activity('Get Stock List').output.StockCode = \"1\"",
+						"type": "Expression"
 					}
 				}
 			}
