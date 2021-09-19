@@ -1,0 +1,77 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfTradingProject"
+		},
+		"KeyVaultGeneralUse_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kvGeneralUse.vault.azure.net/"
+		},
+		"allpurposegeneralstorage_properties_typeProperties_serviceEndpoint": {
+			"type": "string",
+			"defaultValue": "https://allpurposegeneralstorage.blob.core.windows.net"
+		},
+		"allpurposegeneralstorage_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "75099764-499a-4c9a-be3b-eb20119a46dd"
+		},
+		"allpurposegeneralstorage_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "644aa91d-3d52-4aaf-909f-95b95ca9622f"
+		},
+		"API_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{linkedService().webaddress}"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adfTradingProject_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"KeyVaultGeneralUse_properties_typeProperties_baseUrl": {
+						"value": "[parameters('KeyVaultGeneralUse_properties_typeProperties_baseUrl')]"
+					},
+					"API_properties_typeProperties_url": {
+						"value": "[parameters('API_properties_typeProperties_url')]"
+					},
+					"allpurposegeneralstorage_properties_typeProperties_serviceEndpoint": {
+						"value": "[parameters('allpurposegeneralstorage_properties_typeProperties_serviceEndpoint')]"
+					},
+					"allpurposegeneralstorage_properties_typeProperties_tenant": {
+						"value": "[parameters('allpurposegeneralstorage_properties_typeProperties_tenant')]"
+					},
+					"allpurposegeneralstorage_properties_typeProperties_servicePrincipalId": {
+						"value": "[parameters('allpurposegeneralstorage_properties_typeProperties_servicePrincipalId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
