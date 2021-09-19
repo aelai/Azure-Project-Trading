@@ -104,7 +104,7 @@
 									"referenceName": "StockUniverse",
 									"type": "DatasetReference",
 									"parameters": {
-										"folder": "Base/StockPrices",
+										"folder": "Base/ETFStockPrices",
 										"file": {
 											"value": "@concat(\nitem().Stockcode,\n'.csv'\n)",
 											"type": "Expression"
